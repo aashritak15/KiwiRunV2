@@ -1,3 +1,6 @@
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
+
 #include "main.h"
 #include "globals.hpp"
 
@@ -7,8 +10,6 @@ namespace kiwi {
         public:
             float beta;
             float zeta;
-    
-            int subsysNumber;
 
             lemlib::Chassis& chassis;
             lemlib::Drivetrain& drivetrain;
@@ -16,13 +17,22 @@ namespace kiwi {
             pros::MotorGroup& rightMotors;
 
             std::vector<std::reference_wrapper<int>> subsysStates; //points to all subsys
+            std::vector<std::string> subsysNames;
     
-            Config (float beta, float zeta, 
+            Config(float beta, float zeta, 
                 std::vector<std::reference_wrapper<int>> subsysStates,
+                std::vector<std::string> subsysNames,
                 lemlib::Chassis& chassis,
                 lemlib::Drivetrain& drivetrain,
                 pros::MotorGroup& leftMotors,
                 pros::MotorGroup& rightMotors);
+            
+            void write();
+            float getWheelLinearVel(float rpm);
+            float getChassisLinearVel(float leftRPM, float rightRPM);
+            float getChassisAngularVel(float leftRPM, float rightRPM);
     };
     
 }
+
+#endif

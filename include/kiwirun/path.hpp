@@ -1,5 +1,8 @@
+#ifndef PATH_HPP
+#define PATH_HPP
+
 #include "main.h"
-#include "config.hpp"
+#include "kiwirun/config.hpp"
 
 namespace kiwi {
 
@@ -23,3 +26,5 @@ class Path {
 };
 
 }
+
+#endif
