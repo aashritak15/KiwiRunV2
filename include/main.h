@@ -35,7 +35,10 @@
 #define PROS_USE_LITERALS
 
 #include "api.h"
-#include "lemlib/api.hpp" //* enables lemlib
+#include "lemlib/api.hpp" 
+//* enables lemlib
+#include "json.hpp" 
+//*enables json
 
 /**
  * You should add more #includes here

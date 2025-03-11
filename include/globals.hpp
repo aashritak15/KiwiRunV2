@@ -1,4 +1,5 @@
 #include "main.h"
+#include "pros/imu.hpp"
 
 extern pros::Controller controller;
 
@@ -9,4 +10,6 @@ extern lemlib::TrackingWheel horizontal;
 extern lemlib::TrackingWheel vertical;
 
 extern lemlib::Chassis chassis;
+extern lemlib::Drivetrain drivetrain;
 
+extern pros::Imu imu;

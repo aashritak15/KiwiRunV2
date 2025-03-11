@@ -1,8 +1,7 @@
-#include "main.h"
 #include "globals.hpp"
 #include <cmath>
-#include <functional>
 #include "kiwirun/path.hpp"
+#include "kiwirun/ramsete.hpp"
 
 float findLateralError() { 
     float targetX;
@@ -54,16 +53,16 @@ lemlib::Pose findClosestPoint(lemlib::Pose pose, int prevIndex) {
 
 void updateSubsystems();
 
-void ramseteStep() {
+void ramseteStep(kiwi::Path &path) {
 
-    float beta; //TODO: at some point, delete and replace with class
-    float zeta;
+    float beta = path.beta;
+    float zeta = path.zeta;
 
     float linearVelTarget;
     float angularVelTarget;
-    float errorLateral;
-    float errorLongitudinal;
-    float errorTheta; //TODO: must be in radians
+    float errorLateral = findLateralError();
+    float errorLongitudinal = findLongitudinalError();
+    float errorTheta = findThetaError();
 
     float gain = 2 * zeta * std::sqrt(
         std::pow(angularVelTarget, 2) + beta + std::pow(linearVelTarget, 2));

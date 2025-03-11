@@ -1,4 +1,15 @@
 #include "globals.hpp"
+#include "kiwirun/path.hpp"
+#include <functional>
+
+int a = 10;
+int b = 2;
+int c = 3;
+
+std::vector<std::reference_wrapper<int>> subsysStates = {a, b, c};
+
+kiwi::Config config(1, 1, subsysStates, chassis, drivetrain, leftMotors, rightMotors);
+kiwi::Path path(config, "asdf");
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);

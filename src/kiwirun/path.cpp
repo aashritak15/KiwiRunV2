@@ -1,19 +1,24 @@
-#include "main.h"
+#include "kiwirun/path.hpp"
 
 namespace kiwi {
 
-class path {
-    public:
-        std::string pathFileID;
-        
-        float beta;
-        float zeta;
+    Path::Path(kiwi::Config& config, std::string fileID):
+    config(config), fileID(fileID){
+        getPathPoints();
+        getSubsystems();
+        getVelocities();
+    };
 
-        lemlib::Chassis chassis;
-        pros::MotorGroup leftMotors;
-        pros::MotorGroup rightMotors;
+    void getPathPoints() { //TODO: complete
 
-        std::vector<int*> subsysStates; //points to all subsys
-};
+    };
 
+    void getSubsystems() {
+
+    };
+
+    void getVelocities() {
+
+    };
+    
 }
