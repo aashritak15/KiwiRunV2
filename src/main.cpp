@@ -1,6 +1,7 @@
 #include "main.h"
 #include "globals.hpp"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "kiwirun/includes.hpp"
 
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
@@ -41,6 +42,6 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 void autonomous() {}
 
 void opcontrol() {
-    
+    configuration.write();
 
 }

@@ -51,13 +51,4 @@ namespace kiwi {
             } 
         }
     };
-
-    void getSubsystems() {
-
-    };
-
-    void getVelocities() {
-
-    };
-    
 }

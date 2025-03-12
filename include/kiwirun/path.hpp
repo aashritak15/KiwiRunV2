@@ -21,9 +21,9 @@ class Path {
         float findLateralError(float targetX, float targetY);
         float findLongitudinalError(float targetX, float targetY);
         float findThetaError(float targetTheta);
-        lemlib::Pose findClosestPoint(lemlib::Pose pose, int& prevIndex);
+        int findClosestPoint(lemlib::Pose pose, int prevIndex);
 
-        void ramseteStep(lemlib::Pose closestPoint);
+        void ramseteStep(int index);
         void updateSubsystems(int index);
 
 

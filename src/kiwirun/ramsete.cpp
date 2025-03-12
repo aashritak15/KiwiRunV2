@@ -7,28 +7,30 @@ float Path::findLateralError(float targetX, float targetY) {
 
     lemlib::Pose currentPose = this->config.chassis.getPose(true);
 
-    float lateralError = (targetX - currentPose.x) * std::cos(currentPose.theta) 
-    + (targetY - currentPose.y) * std::cos(currentPose.theta);
+    float deltaX = targetX - currentPose.x;
+    float deltaY = targetY - currentPose.y;
 
-    return lateralError;
+    return -deltaX * sin(currentPose.theta) + deltaY * cos(currentPose.theta);
 }
 
 float Path::findLongitudinalError(float targetX, float targetY) {
 
     lemlib::Pose currentPose = this->config.chassis.getPose(true);
 
-    float lateralError = (targetX - currentPose.x) * std::cos(currentPose.theta) 
-    + (targetY - currentPose.y) * std::cos(currentPose.theta);
+    float deltaX = targetX - currentPose.x;
+    float deltaY = targetY - currentPose.y;
 
-    return lateralError;
+    return deltaX * cos(currentPose.theta) + deltaY * sin(currentPose.theta);
 }
 
 float Path::findThetaError(float targetTheta) {
-    return targetTheta - this->config.chassis.getPose(true).theta;
+    float currentTheta = this->config.chassis.getPose(true).theta;
+    float delta = fmod((targetTheta - currentTheta + M_PI), 2*M_PI) - M_PI;
+    return (delta == -M_PI) ? M_PI : delta;
 }
 
-lemlib::Pose Path::findClosestPoint(lemlib::Pose pose, int& prevIndex) {
-    int closestIndex;
+int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
+    int closestIndex = prevIndex + 1;
     float closestDist = infinity();
 
     for (int i = prevIndex + 1; i < this->pathRecordings.size(); i++) {
@@ -39,12 +41,11 @@ lemlib::Pose Path::findClosestPoint(lemlib::Pose pose, int& prevIndex) {
             closestIndex = i;
         } else if (dist > closestDist) {
             prevIndex = closestIndex;
-            return pathRecordings[i - 1]; //if distance increases because you're past the closest point, return the pose 
+            return closestIndex; //if distance increases because you're past the closest point, return the pose 
         }
     }
 
-    prevIndex = -1; //signal that end of path is reached
-    return pathRecordings[prevIndex + 1]; //TODO: probably not a good handler
+    return -1;
 }
 
 void Path::updateSubsystems(int index) {
@@ -53,23 +54,25 @@ void Path::updateSubsystems(int index) {
     }
 }
 
-void Path::ramseteStep(lemlib::Pose target) {
+void Path::ramseteStep(int index) {
 
     float beta = this->config.beta;
     float zeta = this->config.zeta;
+
+    lemlib::Pose target = this->pathRecordings[index]; 
 
     float targetX = target.x;
     float targetY = target.y;
     float targetTheta = target.theta;
 
-    float linearVelTarget;
-    float angularVelTarget;
+    float linearVelTarget = this->velRecordings[index][0];
+    float angularVelTarget = this->velRecordings[index][1];
     float errorLateral = findLateralError(targetX, targetY);
     float errorLongitudinal = findLongitudinalError(targetX, targetY);
     float errorTheta = findThetaError(targetTheta);
 
     float gain = 2 * zeta * std::sqrt(
-        std::pow(angularVelTarget, 2) + beta + std::pow(linearVelTarget, 2));
+        std::pow(angularVelTarget, 2) + (beta * std::pow(linearVelTarget, 2)));
 
     float linearVelCommand = (linearVelTarget * std::cos(errorTheta)) + (gain * errorLongitudinal);
     float angularVelCommand = angularVelTarget + (gain * errorTheta) + (
@@ -81,21 +84,23 @@ void Path::ramseteStep(lemlib::Pose target) {
 }
 
 void Path::follow() {
-    int index;
+    int index = 0;
 
     while(true) {
 
-        lemlib::Pose target = findClosestPoint(this->config.chassis.getPose(), index);
+        index = findClosestPoint(this->config.chassis.getPose(), index);
 
         if(index == -1) {
-            return;
+            break;
         }
 
-        ramseteStep(target);
+        ramseteStep(index);
         updateSubsystems(index);
 
         pros::delay(10);
     }
+
+    return;
 
 }
 
