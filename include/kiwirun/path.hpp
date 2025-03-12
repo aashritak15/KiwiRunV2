@@ -13,16 +13,23 @@ class Path {
         std::string fileID;
 
         std::vector<lemlib::Pose> pathRecordings;
-        std::vector<std::vector<std::reference_wrapper<int>>> subsysRecordings; //vector (timesteps) of vectors (states at timestep) of reference states
+        std::vector<std::vector<float>> subsysRecordings; //vector (timesteps) of vectors (states at timestep) of reference states
         std::vector<std::vector<float>> velRecordings; //vector (timesteps) of vectors (angular/linear vel at timestep) of velocities
 
-        void getPathPoints();
-        void getSubsystems();
-        void getVelocities();
+        void fetchInformation();
+
+        float findLateralError(float targetX, float targetY);
+        float findLongitudinalError(float targetX, float targetY);
+        float findThetaError(float targetTheta);
+        lemlib::Pose findClosestPoint(lemlib::Pose pose, int& prevIndex);
+
+        void ramseteStep(lemlib::Pose closestPoint);
+        void updateSubsystems(int index);
+
 
         Path(kiwi::Config& config, std::string fileID);
 
-
+        void follow();
 };
 
 }

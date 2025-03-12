@@ -1,5 +1,6 @@
 #include "main.h"
 #include "pros/imu.hpp"
+#include "kiwirun/includes.hpp"
 
 extern pros::Controller controller;
 
@@ -13,3 +14,6 @@ extern lemlib::Chassis chassis;
 extern lemlib::Drivetrain drivetrain;
 
 extern pros::Imu imu;
+
+extern kiwi::Config configuration;
+extern kiwi::Path path;

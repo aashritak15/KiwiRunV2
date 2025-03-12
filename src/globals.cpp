@@ -1,13 +1,12 @@
-#include "kiwirun/config.hpp"
 #include "kiwirun/includes.hpp"
 #include <functional>
 
-int a = 10;
-int b = 2;
-int c = 3;
+float a = 10;
+float b = 2;
+float c = 3;
 
 
-std::vector<std::reference_wrapper<int>> subsysStates = {a, b, c};
+std::vector<std::reference_wrapper<float>> subsysStates = {a, b, c};
 std::vector<std::string> subsysNames = {"a", "b", "c"};
 
 kiwi::Config configuration(1, 1, subsysStates, subsysNames, chassis, drivetrain, leftMotors, rightMotors);

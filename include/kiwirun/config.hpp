@@ -2,7 +2,6 @@
 #define CONFIG_HPP
 
 #include "main.h"
-#include "globals.hpp"
 
 namespace kiwi {
 
@@ -16,11 +15,11 @@ namespace kiwi {
             pros::MotorGroup& leftMotors;
             pros::MotorGroup& rightMotors;
 
-            std::vector<std::reference_wrapper<int>> subsysStates; //points to all subsys
+            std::vector<std::reference_wrapper<float>> subsysStates; //points to all subsys
             std::vector<std::string> subsysNames;
     
             Config(float beta, float zeta, 
-                std::vector<std::reference_wrapper<int>> subsysStates,
+                std::vector<std::reference_wrapper<float>> subsysStates,
                 std::vector<std::string> subsysNames,
                 lemlib::Chassis& chassis,
                 lemlib::Drivetrain& drivetrain,

@@ -2,7 +2,7 @@
 
 namespace kiwi {
     Config::Config (float beta, float zeta, 
-        std::vector<std::reference_wrapper<int>> subsysStates,
+        std::vector<std::reference_wrapper<float>> subsysStates,
         std::vector<std::string> subsysNames,
         lemlib::Chassis& chassis,
         lemlib::Drivetrain& drivetrain,

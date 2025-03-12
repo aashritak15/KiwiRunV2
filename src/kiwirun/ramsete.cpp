@@ -1,25 +1,11 @@
-#include "globals.hpp"
 #include <cmath>
-#include "kiwirun/path.hpp"
-#include "kiwirun/ramsete.hpp"
+#include "kiwirun/includes.hpp"
 
-float findLateralError() { 
-    float targetX;
-    float targetY;
+namespace kiwi {
 
-    lemlib::Pose currentPose = chassis.getPose(true);
+float Path::findLateralError(float targetX, float targetY) { 
 
-    float lateralError = (targetX - currentPose.x) * std::cos(currentPose.theta) 
-    + (targetY - currentPose.y) * std::cos(currentPose.theta);
-
-    return lateralError;
-}
-
-float findLongitudinalError() {
-    float targetX;
-    float targetY;
-
-    lemlib::Pose currentPose = chassis.getPose(true);
+    lemlib::Pose currentPose = this->config.chassis.getPose(true);
 
     float lateralError = (targetX - currentPose.x) * std::cos(currentPose.theta) 
     + (targetY - currentPose.y) * std::cos(currentPose.theta);
@@ -27,42 +13,60 @@ float findLongitudinalError() {
     return lateralError;
 }
 
-float findThetaError() {
-    float targetTheta;
-    return targetTheta - chassis.getPose(true).theta;
+float Path::findLongitudinalError(float targetX, float targetY) {
+
+    lemlib::Pose currentPose = this->config.chassis.getPose(true);
+
+    float lateralError = (targetX - currentPose.x) * std::cos(currentPose.theta) 
+    + (targetY - currentPose.y) * std::cos(currentPose.theta);
+
+    return lateralError;
 }
 
-lemlib::Pose findClosestPoint(lemlib::Pose pose, int prevIndex) {
-    lemlib::Pose dummyPose = pose;
+float Path::findThetaError(float targetTheta) {
+    return targetTheta - this->config.chassis.getPose(true).theta;
+}
+
+lemlib::Pose Path::findClosestPoint(lemlib::Pose pose, int& prevIndex) {
     int closestIndex;
     float closestDist = infinity();
 
-    for (int i = prevIndex; i < 0; i++) { //TODO: set i to pathPoints.size
-        const float dist = std::abs(pose.distance(dummyPose)); //TODO: is abs necessary?
+    for (int i = prevIndex + 1; i < this->pathRecordings.size(); i++) {
+        const float dist = std::abs(pose.distance(pathRecordings[i]));
 
         if (dist < closestDist) {
             closestDist = dist;
             closestIndex = i;
         } else if (dist > closestDist) {
-            return dummyPose; //TODO: if distance increases because you're past the closest point, return the pose 
+            prevIndex = closestIndex;
+            return pathRecordings[i - 1]; //if distance increases because you're past the closest point, return the pose 
         }
     }
 
-    return dummyPose; //TODO: update to a non-dummy pose
+    prevIndex = -1; //signal that end of path is reached
+    return pathRecordings[prevIndex + 1]; //TODO: probably not a good handler
 }
 
-void updateSubsystems();
+void Path::updateSubsystems(int index) {
+    for (int i = 0; i < this->subsysRecordings.size(); i++) {
+        this->config.subsysStates[i] = this->subsysRecordings[index][i];
+    }
+}
 
-void ramseteStep(kiwi::Path &path) {
+void Path::ramseteStep(lemlib::Pose target) {
 
-    float beta = path.beta;
-    float zeta = path.zeta;
+    float beta = this->config.beta;
+    float zeta = this->config.zeta;
+
+    float targetX = target.x;
+    float targetY = target.y;
+    float targetTheta = target.theta;
 
     float linearVelTarget;
     float angularVelTarget;
-    float errorLateral = findLateralError();
-    float errorLongitudinal = findLongitudinalError();
-    float errorTheta = findThetaError();
+    float errorLateral = findLateralError(targetX, targetY);
+    float errorLongitudinal = findLongitudinalError(targetX, targetY);
+    float errorTheta = findThetaError(targetTheta);
 
     float gain = 2 * zeta * std::sqrt(
         std::pow(angularVelTarget, 2) + beta + std::pow(linearVelTarget, 2));
@@ -72,6 +76,27 @@ void ramseteStep(kiwi::Path &path) {
         beta * linearVelTarget * std::sin(errorTheta) * errorLateral / errorTheta
     );
 
-    leftMotors.move_velocity(linearVelCommand + angularVelCommand); //TODO: here is moveVelocity and not moveVoltage 
-    rightMotors.move_velocity(linearVelCommand - angularVelCommand);
+    this->config.leftMotors.move_velocity(linearVelCommand + angularVelCommand); //TODO: here is moveVelocity and not moveVoltage 
+    this->config.rightMotors.move_velocity(linearVelCommand - angularVelCommand);
+}
+
+void Path::follow() {
+    int index;
+
+    while(true) {
+
+        lemlib::Pose target = findClosestPoint(this->config.chassis.getPose(), index);
+
+        if(index == -1) {
+            return;
+        }
+
+        ramseteStep(target);
+        updateSubsystems(index);
+
+        pros::delay(10);
+    }
+
+}
+
 }

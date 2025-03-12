@@ -5,8 +5,6 @@
 namespace kiwi {
 
     void Config::write() {
-
-        //TODO: add multipliers
         nlohmann::json json_master;
         std::vector<nlohmann::json> json_segments;
         std::vector<std::vector<nlohmann::json>> json_pointData;
