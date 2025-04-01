@@ -15,50 +15,52 @@ namespace kiwi {
         std::ofstream file;
         file.open("std/path.json");
 
-        while(true) {
-            nlohmann::json json_entry;
+        pros::Task writeTask([&]() {
+            while(true) {
+                nlohmann::json json_entry;
 
-            lemlib::Pose pose = chassis.getPose();
-            float leftRPM = leftMotors.get_actual_velocity();
-            float rightRPM = rightMotors.get_actual_velocity();
+                lemlib::Pose pose = chassis.getPose();
+                float leftRPM = leftMotors.get_actual_velocity();
+                float rightRPM = rightMotors.get_actual_velocity();
 
-            json_entry["index"] = index;
-            json_entry["segment"] = segment;
-            json_entry["x pos"] = pose.x;
-            json_entry["y pos"] = pose.y;
-            
-            json_entry["linear vel"] = getChassisLinearVel(leftRPM, rightRPM);
-            json_entry["angular vel"] = getChassisAngularVel(leftRPM, rightRPM);
-            
-            for(int i = 0; i < subsysStates.size(); i++) {
-                int state = subsysStates[i];
+                json_entry["index"] = index;
+                json_entry["segment"] = segment;
+                json_entry["x pos"] = pose.x;
+                json_entry["y pos"] = pose.y;
+                
+                json_entry["linear vel"] = getChassisLinearVel(leftRPM, rightRPM);
+                json_entry["angular vel"] = getChassisAngularVel(leftRPM, rightRPM);
+                
+                for(int i = 0; i < subsysStates.size(); i++) {
+                    int state = subsysStates[i];
 
-                json_entry[subsysNames[i]] = state;
+                    json_entry[subsysNames[i]] = state;
+                }
+
+                json_pointData.push_back(json_entry);
+
+                index++;
+
+                if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) { //TODO: ADD CONTROLLER OBJECT
+                    break;
+                }
+
+                if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) { //TODO: ADD CONTROLLER OBJECT
+                    json_segments.push_back(json_pointData);
+                    json_pointData.clear();
+
+                    segment++;
+                }
+
+                pros::delay(10);
             }
 
-            json_pointData.push_back(json_entry);
+            json_master["data"] = json_segments;
 
-            index++;
-
-            if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) { //TODO: ADD CONTROLLER OBJECT
-                break;
-            }
-
-            if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) { //TODO: ADD CONTROLLER OBJECT
-                json_segments.push_back(json_pointData);
-                json_pointData.clear();
-
-                segment++;
-            }
-
-            pros::delay(10);
-        }
-
-        json_master["data"] = json_segments;
-
-        file << json_master.dump(5);
-        file.flush();
-        file.close();
+            file << json_master.dump(5);
+            file.flush();
+            file.close();
+        });
     }
 
     float Config::getWheelLinearVel(float rpm) {

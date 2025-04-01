@@ -1,4 +1,5 @@
 #include "main.h"
+#include "intake.hpp"
 #include "globals.hpp"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "kiwirun/includes.hpp"
@@ -42,6 +43,18 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 void autonomous() {}
 
 void opcontrol() {
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
     configuration.write();
+    while (true) {
+        
+        int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
 
+        chassis.arcade(throttle, turn); 
+
+        updateIntake();
+
+        pros::delay(10);
+        
+    }
 }
