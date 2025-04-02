@@ -6,7 +6,16 @@
 std::vector<std::reference_wrapper<float>> subsysStates = {intakeState};
 std::vector<std::string> subsysNames = {"intake state"};
 
-kiwi::Config configuration(1, 1, subsysStates, subsysNames, chassis, drivetrain, leftMotors, rightMotors);
+kiwi::Config configuration(1,
+     1, 
+     subsysStates, 
+     subsysNames, 
+     chassis, 
+     drivetrain, 
+     leftMotors, 
+     rightMotors, 
+     controller
+);
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);

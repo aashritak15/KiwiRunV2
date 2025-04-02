@@ -10,10 +10,12 @@ namespace kiwi {
             float beta;
             float zeta;
 
-            lemlib::Chassis& chassis;
-            lemlib::Drivetrain& drivetrain;
-            pros::MotorGroup& leftMotors;
-            pros::MotorGroup& rightMotors;
+            lemlib::Chassis &chassis;
+            lemlib::Drivetrain drivetrain;
+            pros::MotorGroup &leftMotors;
+            pros::MotorGroup &rightMotors;
+
+            pros::Controller controller;
 
             std::vector<std::reference_wrapper<float>> subsysStates; //points to all subsys
             std::vector<std::string> subsysNames;
@@ -21,10 +23,11 @@ namespace kiwi {
             Config(float beta, float zeta, 
                 std::vector<std::reference_wrapper<float>> subsysStates,
                 std::vector<std::string> subsysNames,
-                lemlib::Chassis& chassis,
-                lemlib::Drivetrain& drivetrain,
-                pros::MotorGroup& leftMotors,
-                pros::MotorGroup& rightMotors);
+                lemlib::Chassis &chassis,
+                lemlib::Drivetrain drivetrain,
+                pros::MotorGroup &leftMotors,
+                pros::MotorGroup &rightMotors,
+                pros::Controller controller);
             
             void write();
             float getWheelLinearVel(float rpm);

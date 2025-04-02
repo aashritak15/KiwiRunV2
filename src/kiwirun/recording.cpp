@@ -5,56 +5,57 @@
 namespace kiwi {
 
     void Config::write() {
-        nlohmann::json json_master;
-        json_master["data"] = nlohmann::json::array();
+        nlohmann::json master; //Declare master JSON object
 
-        int index = 0;
+        int index = 0; //Declare index and segments
         int segment = 0;
 
-        std::ofstream file;
+        std::ofstream file; //Declare file
         file.open("std/path.json");
 
         pros::Task writeTask([&]() {
             while(true) {
-                nlohmann::json json_entry = nlohmann::json::object();
+                nlohmann::json pointData; //pointData: JSON object for a single point
 
-
-                lemlib::Pose pose = chassis.getPose();
+                lemlib::Pose pose = chassis.getPose(); //Retrieve pose information
                 float leftRPM = leftMotors.get_actual_velocity();
                 float rightRPM = rightMotors.get_actual_velocity();
 
-                json_entry["index"] = index;
-                json_entry["segment"] = segment;
-                json_entry["x pos"] = pose.x;
-                json_entry["y pos"] = pose.y;
+                pointData["segment"] = segment;
+
+                pointData["x pos"] = pose.x; //Write pose
+                pointData["y pos"] = pose.y;
+                pointData["theta"] = pose.theta;
                 
-                json_entry["linear vel"] = getChassisLinearVel(leftRPM, rightRPM);
-                json_entry["angular vel"] = getChassisAngularVel(leftRPM, rightRPM);
+                pointData["linear vel"] = getChassisLinearVel(leftRPM, rightRPM); //Write velocities
+                pointData["angular vel"] = getChassisAngularVel(leftRPM, rightRPM);
                 
-                for(int i = 0; i < subsysStates.size(); i++) {
+                for(int i = 0; i < subsysStates.size(); i++) { //Write all subsystems
                     float state = subsysStates[i];
 
-                    json_entry[subsysNames[i]] = state;
+                    std::string subsysName = subsysNames[i];
+
+                    pointData[subsysName] = state;
                 }
 
-                std::cout << json_entry.dump(4) << std::endl;
+                std::cout << pointData.dump(4) << std::endl; //TODO: DEBUG COUT!
 
-                json_master["data"].push_back(json_entry);
+                master[std::to_string(index)] = pointData; //Point data written to master data
 
-                index++;
+                index++; //Increment index
 
-                if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) { //TODO: ADD CONTROLLER OBJECT
+                if(this->controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
                     break;
                 }
 
-                if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) { //TODO: ADD CONTROLLER OBJECT
+                if(this->controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
                     segment++;
                 }
 
                 pros::delay(10);
             }
 
-            file << json_master.dump(4);
+            file << master.dump(3);
 
             file.flush();
             file.close();
