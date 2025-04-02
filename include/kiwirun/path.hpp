@@ -16,7 +16,7 @@ class Path {
         std::vector<std::vector<float>> subsysRecordings; //vector (timesteps) of vectors (states at timestep) of reference states
         std::vector<std::vector<float>> velRecordings; //vector (timesteps) of vectors (angular/linear vel at timestep) of velocities
 
-        void fetchInformation();
+        void fetchData();
 
         float findLateralError(float targetX, float targetY);
         float findLongitudinalError(float targetX, float targetY);

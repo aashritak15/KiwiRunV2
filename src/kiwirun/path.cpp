@@ -5,20 +5,21 @@ namespace kiwi {
 
     Path::Path(kiwi::Config& config, std::string fileID):
     config(config), fileID(fileID){
-        this->fetchInformation();
+        this->fetchData();
     };
 
-    void Path::fetchInformation() {
-        nlohmann::json json_master;
+    void Path::fetchData() {
+        nlohmann::json master;
 
         std::ifstream file;
         file.open(this->fileID);
         
-        file >> json_master;
+        file >> master;
 
         file.close();
 
-        std::vector<std::vector<nlohmann::json>> json_segments = json_master["data"];
+        std::vector<std::vector<nlohmann::json>> json_segments = master; //TODO: there is no shot this works.
+
         //first vector: segments
         //second vector: data points of each segment
         //nlohmann json: single data points
@@ -28,7 +29,7 @@ namespace kiwi {
             for(int j = 0; i < json_segments[i].size(); j++) { //loop through data points
                 lemlib::Pose point(0, 0, 0); //find position information
 
-                point.x = json_segments[i][j]["x pos"]; //TODO: check
+                point.x = json_segments[i][j]["x pos"]; //find position information
                 point.y = json_segments[i][j]["y pos"];
                 point.theta = json_segments[i][j]["theta"];
 

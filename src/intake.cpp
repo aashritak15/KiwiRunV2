@@ -4,9 +4,6 @@
 
 float intakeState = 0;
 
-// bool buttonUpPressed = false;
-// bool colorDetected = false;
-
 void intakeInit() {
     intakeUpper.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     intakeLower.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);

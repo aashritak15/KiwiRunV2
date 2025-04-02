@@ -11,7 +11,7 @@ namespace kiwi {
         int segment = 0;
 
         std::ofstream file; //Declare file
-        file.open("std/path.json");
+        file.open("std/path.json"); //TODO: TESTING PATH! CHANGE BACK TO THIS->PATHID
 
         pros::Task writeTask([&]() {
             while(true) {
