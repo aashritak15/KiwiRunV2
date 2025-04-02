@@ -23,6 +23,11 @@ void initialize() {
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+
+            // std::cout<<"X: "<<std::to_string(chassis.getPose().x)<<"\n";
+            // std::cout<<"Y: "<<std::to_string(chassis.getPose().y)<<"\n";
+            // std::cout<<"Theta: "<<std::to_string(chassis.getPose().theta)<<"\n\n";
+
             // log position telemetry
             lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             // delay to save resources

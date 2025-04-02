@@ -6,8 +6,7 @@ namespace kiwi {
 
     void Config::write() {
         nlohmann::json json_master;
-        std::vector<nlohmann::json> json_segments;
-        std::vector<std::vector<nlohmann::json>> json_pointData;
+        json_master["data"] = nlohmann::json::array();
 
         int index = 0;
         int segment = 0;
@@ -17,7 +16,8 @@ namespace kiwi {
 
         pros::Task writeTask([&]() {
             while(true) {
-                nlohmann::json json_entry;
+                nlohmann::json json_entry = nlohmann::json::object();
+
 
                 lemlib::Pose pose = chassis.getPose();
                 float leftRPM = leftMotors.get_actual_velocity();
@@ -32,12 +32,14 @@ namespace kiwi {
                 json_entry["angular vel"] = getChassisAngularVel(leftRPM, rightRPM);
                 
                 for(int i = 0; i < subsysStates.size(); i++) {
-                    int state = subsysStates[i];
+                    float state = subsysStates[i];
 
                     json_entry[subsysNames[i]] = state;
                 }
 
-                json_pointData.push_back(json_entry);
+                std::cout << json_entry.dump(4) << std::endl;
+
+                json_master["data"].push_back(json_entry);
 
                 index++;
 
@@ -46,18 +48,14 @@ namespace kiwi {
                 }
 
                 if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) { //TODO: ADD CONTROLLER OBJECT
-                    json_segments.push_back(json_pointData);
-                    json_pointData.clear();
-
                     segment++;
                 }
 
                 pros::delay(10);
             }
 
-            json_master["data"] = json_segments;
+            file << json_master.dump(4);
 
-            file << json_master.dump(5);
             file.flush();
             file.close();
         });
