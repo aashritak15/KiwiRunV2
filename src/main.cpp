@@ -49,7 +49,7 @@ void autonomous() {}
 
 void opcontrol() {
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-    configuration.write();
+    //configuration.write();
     while (true) {
         
         int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);

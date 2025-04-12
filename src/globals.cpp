@@ -32,19 +32,3 @@ lemlib::ExpoDriveCurve steerCurve(3, 10, 1.019);
 lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, &throttleCurve, &steerCurve);
 
 
-
-std::vector<float*> subsysStates = { &intakeState };
-std::vector<std::string> subsysNames = { "intake state" };
-
-
-kiwi::Config configuration(
-    1,
-    1,
-    subsysStates,
-    subsysNames,
-    &chassis,
-    drivetrain,
-    &leftMotors,
-    &rightMotors,
-    controller
-);
