@@ -9,7 +9,7 @@ namespace kiwi {
         pros::Task writeTask([&]() {
             nlohmann::json master = nlohmann::json::array();  // Holds all points
 
-            int jklmfun = 0;
+            int index = 0;
 
             while (true) {
                 nlohmann::json pointData;
@@ -22,7 +22,7 @@ namespace kiwi {
                 float yPos = std::round(pose.y * 1000) / 1000;
                 float thetaPos = std::round(pose.theta * 1000) / 1000;
 
-                pointData["index"] = jklmfun++;
+                pointData["index"] = index++;
                 pointData["x pos"] = xPos;
                 pointData["y pos"] = yPos;
                 pointData["theta"] = thetaPos;
@@ -53,7 +53,7 @@ namespace kiwi {
     }
 
     float Config::getWheelLinearVel(float rpm) {
-        return rpm / 60 * 2 * M_PI * 3.25; 
+        return rpm / 60 * 2 * M_PI * this->drivetrain.wheelDiameter; //TODO: check if wheel diameter reference works
     }
 
     float Config::getChassisLinearVel(float leftRPM, float rightRPM) {
@@ -61,7 +61,7 @@ namespace kiwi {
     }
 
     float Config::getChassisAngularVel(float leftRPM, float rightRPM) {
-        return (getWheelLinearVel(rightRPM) - getWheelLinearVel(leftRPM)) / 12.75; 
+        return (getWheelLinearVel(rightRPM) - getWheelLinearVel(leftRPM)) / this->drivetrain.trackWidth; //TODO: check if trackwidth reference works 
     }
 
 };
