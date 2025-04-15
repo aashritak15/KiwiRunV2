@@ -87,8 +87,23 @@ void Path::ramseteStep(int index) {
     );
         // angular command calculated with: beta * linear velocity target * sin(angle error) * lateral error / angle error
 
-    this->config.leftMotors.move_velocity(linearVelCommand + angularVelCommand); // velocity sent to motors
-    this->config.rightMotors.move_velocity(linearVelCommand - angularVelCommand);
+    float leftCommand = linearVelCommand + angularVelCommand;
+    float rightCommand = linearVelCommand - angularVelCommand;
+
+    if(leftCommand > 600) {
+        float fix = 600 / leftCommand;
+        leftCommand *= fix;
+        rightCommand *= fix;
+    }
+    
+    if(rightCommand > 600) {
+        float fix = 600 / rightCommand;
+        leftCommand *= fix;
+        rightCommand *= fix;
+    }
+
+    this->config.leftMotors.move_velocity(leftCommand); // velocity sent to motors
+    this->config.rightMotors.move_velocity(rightCommand);
 }
 
 void Path::follow() {
