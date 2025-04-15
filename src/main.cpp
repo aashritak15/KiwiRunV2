@@ -1,10 +1,20 @@
 #include "main.h"
-#include "intake.hpp"
+#include "drivecode/ladybrown.hpp"
+#include "drivecode/intake.hpp"
+#include "drivecode/pistons.hpp"
+#include "drivecode/loops.hpp"
 #include "globals.hpp"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "kiwirun/includes.hpp"
 
 void initialize() {
+
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+
+    intakeInit();
+    ladyBrownInit();
+    pistonInit();
+
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
 
@@ -24,12 +34,15 @@ void initialize() {
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
 
+            pros::lcd::print(3, "Intake state: %f", intakeState);
+            pros::lcd::print(4, "Piston state: %f", clampState);
+
             // std::cout<<"X: "<<std::to_string(chassis.getPose().x)<<"\n";
             // std::cout<<"Y: "<<std::to_string(chassis.getPose().y)<<"\n";
             // std::cout<<"Theta: "<<std::to_string(chassis.getPose().theta)<<"\n\n";
 
             // log position telemetry
-            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+            // lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             // delay to save resources
             pros::delay(50);
         }
@@ -48,16 +61,9 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 void autonomous() {}
 
 void opcontrol() {
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-    //configuration.write();
     while (true) {
         
-        int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-
-        chassis.arcade(throttle, turn); 
-
-        updateIntake();
+        matchControl();
 
         pros::delay(10);
         
