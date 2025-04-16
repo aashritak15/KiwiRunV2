@@ -1,12 +1,12 @@
 #include "drivecode/loops.hpp"
 
 void matchControl() {
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+
     while(true) {
-        updateIntake();
-        updatePistons();
 
         int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+        int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * 0.9;
 
         double leftCommand = (throttle + turn) / 127.0;
         double rightCommand = (throttle - turn) / 127.0;
@@ -31,6 +31,9 @@ void matchControl() {
 
         rightMotors.move_voltage(rightCommand);
         rightBack.move_voltage(rightCommand);
+
+        updateIntake();
+        updatePistons();
 
         pros::delay(10);
     }

@@ -61,21 +61,21 @@ void updatePistons() {
 void runPistons() {
     while (true) {
         if(clampState == 1) { //mogo clamp control
-            mogoClamp.set_value(1);
+            mogoClamp.set_value(true);
         } else {
-            mogoClamp.set_value(0);
+            mogoClamp.set_value(false);
         }
 
         if (leftDoinkerState == 1) { //left doinker control
-            leftDoinker.set_value(1);
+            leftDoinker.set_value(true);
         } else {
-            leftDoinker.set_value(0);
+            leftDoinker.set_value(false);
         }
 
         if (rightDoinkerState == 1) { //right doinker control
-            rightDoinker.set_value(1);
+            rightDoinker.set_value(true);
         } else {
-            rightDoinker.set_value(0);
+            rightDoinker.set_value(false);
         } 
 
         pros::delay(10);
