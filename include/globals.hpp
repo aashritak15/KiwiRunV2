@@ -7,6 +7,9 @@ extern pros::Controller controller;
 extern pros::MotorGroup leftMotors;
 extern pros::MotorGroup rightMotors;
 
+extern pros::Motor leftBack;
+extern pros::Motor rightBack;
+
 extern lemlib::Chassis chassis;
 extern lemlib::Drivetrain drivetrain;
 

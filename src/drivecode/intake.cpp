@@ -28,7 +28,7 @@ void updateIntake() {
     }
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-        if (l2Pressed) {
+        if (!l2Pressed) {
             l2Pressed = true;
             if (intakeState == 0 || intakeState == 1) {
                 intakeState = 2;
