@@ -37,7 +37,7 @@ int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
     int closestIndex = prevIndex + 1;
     float closestDist = infinity();
 
-    for (int i = prevIndex + 1; i < this->pathRecordings.size(); i++) {
+    for (int i = closestIndex; i < this->pathRecordings.size(); i++) {
         // loop starting at ONE FORWARD THE PREVIOUSLY CLOSEST POINT! SKIP / STOP TOLERANCE!
         // and ending at the end of the path
 
@@ -52,7 +52,7 @@ int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
         }
     }
 
-    return -1; // you're screwed
+    return -1; // you're screwed OR end of path reached
 }
 
 void Path::updateSubsystems(int index) {
