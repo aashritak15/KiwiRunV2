@@ -23,6 +23,8 @@ class Path {
         float findThetaError(float targetTheta);
         int findClosestPoint(lemlib::Pose pose, int prevIndex);
 
+        float toRPM(float linearVel);
+
         void ramseteStep(int index);
         void updateSubsystems(int index);
 

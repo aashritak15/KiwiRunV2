@@ -1,6 +1,9 @@
-
 #include <cmath>
 #include "kiwirun/includes.hpp"
+#include "globals.hpp"
+
+std::string debugLine;
+std::ofstream debugFile("usd/debug.txt");
 
 namespace kiwi {
 
@@ -58,6 +61,11 @@ void Path::updateSubsystems(int index) {
     }
 }
 
+float Path::toRPM(float linearVel) {
+    float corrected = linearVel / (M_PI * this->config.drivetrain.wheelDiameter) * 60 / this->config.driven * this->config.driving;
+    return corrected;
+}
+
 void Path::ramseteStep(int index) {
 
     float beta = this->config.beta; // beta and zeta values fetched
@@ -69,12 +77,23 @@ void Path::ramseteStep(int index) {
     float targetY = target.y;
     float targetTheta = target.theta;
 
+    debugLine.append("x target: " + std::to_string(targetX) + "\n"); //*DEBUG LINES FOR XYTHETA
+    debugLine.append("y target: " + std::to_string(targetY) + "\n");
+    debugLine.append("theta target: " + std::to_string(targetTheta) + "\n");
+
     float linearVelTarget = this->velRecordings[index][0]; // target velocities fetched
     float angularVelTarget = this->velRecordings[index][1];
+
+    debugLine.append("linear vel target: " + std::to_string(linearVelTarget) + "\n"); //*DEBUG LINES FOR VELS
+    debugLine.append("angular vel target: " + std::to_string(angularVelTarget) + "\n");
 
     float errorLateral = findLateralError(targetX, targetY); // lateral or crosstrack error calculated
     float errorLongitudinal = findLongitudinalError(targetX, targetY); // longitudinal or front/back error calculated
     float errorTheta = findThetaError(targetTheta); // angular error calculated
+
+    debugLine.append("lateral error: " + std::to_string(errorLateral) + "\n"); //*DEBUG LINES FOR XYTHETA
+    debugLine.append("longitudinal error: " + std::to_string(errorLongitudinal) + "\n");
+    debugLine.append("theta error: " + std::to_string(errorTheta) + "\n");
 
     float gain = 2 * zeta * std::sqrt(
         std::pow(angularVelTarget, 2) + (beta * std::pow(linearVelTarget, 2))
@@ -87,31 +106,49 @@ void Path::ramseteStep(int index) {
     );
         // angular command calculated with: beta * linear velocity target * sin(angle error) * lateral error / angle error
 
-    float leftCommand = linearVelCommand + angularVelCommand;
-    float rightCommand = linearVelCommand - angularVelCommand;
+    debugLine.append("gain: " + std::to_string(gain) + "\n"); //*DEBUG LINE FOR GAIN, LINEAR VEL, ANGULAR VEL
+    debugLine.append("raw linear vel command: " + std::to_string(linearVelCommand) + "\n");
+    debugLine.append("raw angular vel command: " + std::to_string(angularVelTarget) + "\n");
 
-    if(leftCommand > 600) {
-        float fix = 600 / leftCommand;
-        leftCommand *= fix;
-        rightCommand *= fix;
+    angularVelCommand *= this->config.drivetrain.wheelDiameter; //convert angular vel command from rad/s to in/s
+
+    float leftRPMCommand = toRPM(linearVelCommand + angularVelCommand); //convert in/s of wheels to rpm
+    float rightRPMCommand = toRPM(linearVelCommand - angularVelCommand);
+
+    if(leftRPMCommand > 600) {
+        float fix = 600 / leftRPMCommand;
+        leftRPMCommand *= fix;
+        rightRPMCommand *= fix;
     }
     
-    if(rightCommand > 600) {
-        float fix = 600 / rightCommand;
-        leftCommand *= fix;
-        rightCommand *= fix;
+    if(rightRPMCommand > 600) {
+        float fix = 600 / rightRPMCommand;
+        leftRPMCommand *= fix;
+        rightRPMCommand *= fix;
     }
 
-    this->config.leftMotors.move_velocity(leftCommand); // velocity sent to motors
-    this->config.rightMotors.move_velocity(rightCommand);
+    debugLine.append("left rpm command: " + std::to_string(linearVelCommand) + "\n"); //*DEBUG LINE FOR LEFT AND RIGHT RPM
+    debugLine.append("right rpm command: " + std::to_string(angularVelTarget) + "\n\n"); //*LAST DEBUG LINE
+
+    this->config.leftMotors.move_velocity(leftRPMCommand); // velocity sent to motors
+    this->config.rightMotors.move_velocity(rightRPMCommand);
+
+    leftBack.move_velocity(leftRPMCommand / 3); //TODO: SKETCH 55W IMPLEMENTATION
+    rightBack.move_velocity(rightRPMCommand / 3);
 }
 
 void Path::follow() {
     int index = 0;
 
+    this->fetchData(); //fetch data
+
     while (true) {
 
+        debugLine.append("NEW TICK\n");
+
         index = findClosestPoint(this->config.chassis.getPose(), index);
+
+        debugLine.append("closest index: " + std::to_string(index) + "\n");
 
         if (index == -1) {
             break;
@@ -120,7 +157,11 @@ void Path::follow() {
         ramseteStep(index);
         updateSubsystems(index);
 
+        debugFile << debugLine;
+        debugLine.clear();
+
         pros::delay(10);
+
     }
 
     return;

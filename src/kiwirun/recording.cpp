@@ -53,7 +53,7 @@ namespace kiwi {
     }
 
     float Config::getWheelLinearVel(float rpm) {
-        return rpm / 60 * 2 * M_PI * this->drivetrain.wheelDiameter; //TODO: check if wheel diameter reference works
+        return rpm / 60 * M_PI * this->drivetrain.wheelDiameter * this->driven / this->driving; //TODO: check if wheel diameter reference works
     }
 
     float Config::getChassisLinearVel(float leftRPM, float rightRPM) {
