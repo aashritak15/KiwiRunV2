@@ -1,3 +1,6 @@
+#ifndef GLOBALS_HPP
+#define GLOBALS_HPP
+
 #include "main.h"
 #include "pros/imu.hpp"
 #include "kiwirun/includes.hpp"
@@ -17,3 +20,5 @@ extern pros::Imu imu;
 
 extern kiwi::Config configuration;
 extern kiwi::Path path;
+
+#endif
