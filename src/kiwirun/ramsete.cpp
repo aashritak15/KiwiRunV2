@@ -98,7 +98,8 @@ void Path::ramseteStep(int index) {
         * errorLateral / errorTheta
     ); // angular command calculated with: beta * linear velocity target * sin(angle error) * lateral error / angle error
 
-    angularVelCommand *= this->config.drivetrain.wheelDiameter; //convert angular vel command from rad/s to in/s
+    angularVelCommand *= this->config.drivetrain.trackWidth; //convert angular vel command from rad/s to in/s
+    //TODO: multiply or divide by two?
 
     float leftRPMCommand = toRPM(linearVelCommand + angularVelCommand); //convert in/s of wheels to rpm
     float rightRPMCommand = toRPM(linearVelCommand - angularVelCommand);

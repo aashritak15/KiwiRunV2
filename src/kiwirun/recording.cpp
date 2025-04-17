@@ -61,7 +61,9 @@ namespace kiwi {
     }
 
     float Config::getChassisAngularVel(float leftRPM, float rightRPM) {
-        return (getWheelLinearVel(rightRPM) - getWheelLinearVel(leftRPM)) / this->drivetrain.trackWidth; //TODO: check if trackwidth reference works 
+        return ( getWheelLinearVel(leftRPM) - getWheelLinearVel(rightRPM) ) / this->drivetrain.trackWidth ; //TODO: check if trackwidth reference works 
+
+        //TODO: multiply by two????
     }
 
 };
