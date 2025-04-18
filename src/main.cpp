@@ -13,6 +13,7 @@ void initialize() {
     chassis.setPose(0, 0, 0);
 
     pros::screen::print(pros::E_TEXT_MEDIUM, 1, "hello world");
+    pros::screen::print(pros::E_TEXT_MEDIUM, 2, "hello world");
 
     intakeInit();
     pistonInit();

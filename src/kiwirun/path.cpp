@@ -35,6 +35,5 @@ namespace kiwi {
             velRecordingsPoint.push_back(jsonPoint["angular vel"]);
             velRecordings.push_back(velRecordingsPoint);
         }
-};
-
+    };
 }
