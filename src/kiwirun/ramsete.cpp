@@ -90,7 +90,12 @@ void Path::ramseteStep(int index) {
 
     float linearVelCommand = 
         (linearVelTarget * std::cos(errorTheta)) 
-        + (gain * errorLongitudinal); // linear command calculated with: [linear velocity target * cos(angle error)] + (gain * longitudinal error)
+        + (gain * errorLongitudinal
+    ); // linear command calculated with: [linear velocity target * cos(angle error)] + (gain * longitudinal error)
+
+    if(errorTheta < 0.01) { //*divide by zero protection
+        errorTheta = 0.01;
+    }
 
     float angularVelCommand = 
         angularVelTarget + (gain * errorTheta) + 
@@ -104,22 +109,21 @@ void Path::ramseteStep(int index) {
     float leftRPMCommand = toRPM(linearVelCommand + tangentialVelCommand); //convert in/s of wheels to rpm
     float rightRPMCommand = toRPM(linearVelCommand - tangentialVelCommand);
 
-    if(leftRPMCommand > 600) { //fix speed if left rpm goes over maximum
-        float fix = 600 / leftRPMCommand;
-        leftRPMCommand *= fix;
-        rightRPMCommand *= fix;
+    float maxRPM = std::max(std::abs(leftRPMCommand), std::abs(rightRPMCommand));
+
+    if(maxRPM > 600) {
+        float scale = 600.0 / maxRPM;
+        leftRPMCommand *= scale;
+        rightRPMCommand *= scale;
     }
-    
-    if(rightRPMCommand > 600) { //fix speed if right rpm goes over maximum
-        float fix = 600 / rightRPMCommand;
-        leftRPMCommand *= fix;
-        rightRPMCommand *= fix;
-    }
+
+
+
 
     this->config.leftMotors.move_velocity(leftRPMCommand); // velocity sent to motors
     this->config.rightMotors.move_velocity(rightRPMCommand);
 
-    leftBack.move_velocity(leftRPMCommand / 3); //TODO: SKETCH 55W IMPLEMENTATION
+    leftBack.move_velocity(leftRPMCommand / 3); //*: sketch 55w implementation lol but it'll work
     rightBack.move_velocity(rightRPMCommand / 3);
 
     lemlib::Pose pose = this->config.chassis.getPose();
@@ -132,8 +136,8 @@ void Path::ramseteStep(int index) {
     debugLine.append("y target: " + std::to_string(targetY) + "\n");
     debugLine.append("theta target: " + std::to_string(targetTheta) + "\n\n");
 
-    debugLine.append("current left rpm: " + std::to_string(this->config.rightMotors.get_actual_velocity()) + "\n"); //*DEBUG LINES FOR CURRENT RPMS
-    debugLine.append("current left rpm: " + std::to_string(this->config.leftMotors.get_actual_velocity()) + "\n\n");
+    debugLine.append("current left rpm: " + std::to_string(this->config.leftMotors.get_actual_velocity()) + "\n"); //*DEBUG LINES FOR CURRENT RPMS
+    debugLine.append("current right rpm: " + std::to_string(this->config.rightMotors.get_actual_velocity()) + "\n\n");
 
     debugLine.append("lateral error: " + std::to_string(errorLateral) + "\n"); //*DEBUG LINES FOR ERRORS
     debugLine.append("longitudinal error: " + std::to_string(errorLongitudinal) + "\n");
