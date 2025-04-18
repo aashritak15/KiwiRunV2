@@ -93,7 +93,7 @@ void Path::ramseteStep(int index) {
         + (gain * errorLongitudinal
     ); // linear command calculated with: [linear velocity target * cos(angle error)] + (gain * longitudinal error)
 
-    if(errorTheta < 0.01) { //*divide by zero protection
+    if(std::abs(errorTheta) < 0.01) { //*divide by zero protection
         errorTheta = 0.01;
     }
 
