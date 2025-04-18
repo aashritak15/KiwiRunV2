@@ -117,9 +117,6 @@ void Path::ramseteStep(int index) {
         rightRPMCommand *= scale;
     }
 
-
-
-
     this->config.leftMotors.move_velocity(leftRPMCommand); // velocity sent to motors
     this->config.rightMotors.move_velocity(rightRPMCommand);
 
