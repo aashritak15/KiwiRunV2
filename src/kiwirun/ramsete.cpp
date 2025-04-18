@@ -98,11 +98,11 @@ void Path::ramseteStep(int index) {
         * errorLateral / errorTheta
     ); // angular command calculated with: beta * linear velocity target * sin(angle error) * lateral error / angle error
 
-    angularVelCommand *= this->config.drivetrain.trackWidth; //convert angular vel command from rad/s to in/s
+    float tangentialVelCommand = angularVelCommand * this->config.drivetrain.trackWidth / 2; //convert angular vel command from rad/s to in/s
     //TODO: multiply or divide by two?
 
-    float leftRPMCommand = toRPM(linearVelCommand + angularVelCommand); //convert in/s of wheels to rpm
-    float rightRPMCommand = toRPM(linearVelCommand - angularVelCommand);
+    float leftRPMCommand = toRPM(linearVelCommand + tangentialVelCommand); //convert in/s of wheels to rpm
+    float rightRPMCommand = toRPM(linearVelCommand - tangentialVelCommand);
 
     if(leftRPMCommand > 600) { //fix speed if left rpm goes over maximum
         float fix = 600 / leftRPMCommand;
@@ -141,11 +141,17 @@ void Path::ramseteStep(int index) {
 
     debugLine.append("gain: " + std::to_string(gain) + "\n"); //*DEBUG LINES FOR GAIN
 
-    debugLine.append("linear vel target: " + std::to_string(linearVelTarget) + "\n"); //*DEBUG LINES FOR VELS
+    debugLine.append("linear vel target: " + std::to_string(linearVelTarget) + "\n"); //*DEBUG LINES FOR VEL TARGETS
     debugLine.append("angular vel target: " + std::to_string(angularVelTarget) + "\n\n");
+
+    debugLine.append("linear vel command: " + std::to_string(linearVelCommand) + "\n");//*DEBUG LINES FOR VEL COMMANDS
+    debugLine.append("angular vel command: " + std::to_string(angularVelCommand) + "\n");
+    debugLine.append("tangential vel command: " + std::to_string(tangentialVelCommand) + "\n\n");
 
     debugLine.append("left rpm command: " + std::to_string(linearVelCommand) + "\n"); //*DEBUG LINE FOR LEFT AND RIGHT RPM
     debugLine.append("right rpm command: " + std::to_string(angularVelTarget) + "\n\n\n\n"); //*LAST DEBUG LINE
+
+    //19 debug lines wow
 
 }
 
