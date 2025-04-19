@@ -7,13 +7,15 @@
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-pros::MotorGroup leftMotors({-1, -2}, pros::MotorGearset::blue);
-pros::MotorGroup rightMotors({12, 15}, pros::MotorGearset::blue);
+pros::MotorGroup leftMotors({-1, -20}, pros::MotorGearset::blue);
+pros::MotorGroup rightMotors({5, 3}, pros::MotorGearset::blue);
 
-pros::Motor leftBack(-7, pros::MotorGearset::green);
-pros::Motor rightBack(13, pros::MotorGearset::green);
+pros::Motor leftBack(-8, pros::MotorGearset::green);
+pros::Motor rightBack(14, pros::MotorGearset::green);
 
-// pros::Imu imu(3);
+pros::Imu imu(3);
+
+
 
 lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 12.75,
                               lemlib::Omniwheel::NEW_275, 450, 2);
@@ -23,7 +25,7 @@ lemlib::ControllerSettings linearController(0, 0, 0, 3, 1, 100, 3, 500, 20);
 lemlib::ControllerSettings angularController(0, 0, 0, 3, 1, 100, 3, 500, 0);
 
 
-lemlib::OdomSensors sensors(nullptr, nullptr, nullptr, nullptr, nullptr);
+lemlib::OdomSensors sensors(nullptr, nullptr, nullptr, nullptr, &imu);
 
 
 lemlib::ExpoDriveCurve throttleCurve(3, 10, 1.019);

@@ -5,7 +5,7 @@
 #include "globals.hpp"
 #include "pros/rotation.hpp"
 
-inline pros::Motor ladyBrown(-17, pros::MotorGearset::red);
+inline pros::Motor ladyBrown(-13, pros::MotorGearset::red);
 inline pros::Rotation lbRotation(0);
 
 void ladyBrownInit();

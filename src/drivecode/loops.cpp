@@ -76,6 +76,6 @@ void kiwiRunControl() {
         updateIntake();
         updatePistons();
 
-        pros::delay(10);
+        pros::delay(100);
     }
 }
