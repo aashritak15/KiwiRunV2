@@ -32,5 +32,9 @@ ASSET(example_txt); // '.' replaced with "_" to make c++ happy
 void autonomous() {}
 
 void opcontrol() {
-    matchControl();
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+
+    while(true) {
+        matchControl();
+    }
 }

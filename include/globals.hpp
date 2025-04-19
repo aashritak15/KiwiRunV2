@@ -18,7 +18,4 @@ extern lemlib::Drivetrain drivetrain;
 
 extern pros::Imu imu;
 
-extern kiwi::Config configuration;
-extern kiwi::Path path;
-
 #endif

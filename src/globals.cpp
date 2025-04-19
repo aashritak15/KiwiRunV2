@@ -13,9 +13,7 @@ pros::MotorGroup rightMotors({5, 3}, pros::MotorGearset::blue);
 pros::Motor leftBack(-8, pros::MotorGearset::green);
 pros::Motor rightBack(14, pros::MotorGearset::green);
 
-pros::Imu imu(3);
-
-
+pros::Imu imu(0);
 
 lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 12.75,
                               lemlib::Omniwheel::NEW_275, 450, 2);

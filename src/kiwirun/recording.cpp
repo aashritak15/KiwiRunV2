@@ -11,6 +11,8 @@ namespace kiwi {
 
             int index = 0;
 
+            int count = 1;
+
             while (true) {
                 nlohmann::json pointData;
 
