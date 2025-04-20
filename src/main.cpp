@@ -32,7 +32,9 @@ void opcontrol() {
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
     while(true) {
-        kiwiRunControl();
+        //kiwiRunControl();
+
+        matchControl();
 
         // firstPath.follow();
     }
