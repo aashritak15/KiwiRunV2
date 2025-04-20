@@ -10,8 +10,8 @@ float Path::findLateralError(float targetX, float targetY) { // lateral error
 
     lemlib::Pose currentPose = this->config.chassis.getPose(true);
 
-    float deltaX = targetX - currentPose.x;
-    float deltaY = targetY - currentPose.y;
+    float deltaX = currentPose.x - targetX;
+    float deltaY = currentPose.y - targetY;
 
     return -deltaX * sin(currentPose.theta) + deltaY * cos(currentPose.theta);
 }
@@ -20,16 +20,15 @@ float Path::findLongitudinalError(float targetX, float targetY) { // longitudina
 
     lemlib::Pose currentPose = this->config.chassis.getPose(true);
 
-    float deltaX = targetX - currentPose.x;
-    float deltaY = targetY - currentPose.y;
+    float deltaX = currentPose.x - targetX;
+    float deltaY = currentPose.y - targetY;
 
     return deltaX * cos(currentPose.theta) + deltaY * sin(currentPose.theta);
 }
 
 float Path::findThetaError(float targetTheta) { // theta error with angle jump sanitation
-    float currentTheta = this->config.chassis.getPose(true).theta;
-    float delta = fmod((targetTheta - currentTheta + M_PI), 2 * M_PI) - M_PI;
-    return (delta == -M_PI) ? M_PI : delta;
+    float currentTheta = this->config.chassis.getPose(true).theta; //TODO: removed angle jump sanitation
+    return targetTheta - currentTheta;
 }
 
 int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
@@ -62,8 +61,8 @@ void Path::updateSubsystems(int index) { //TODO: check
     }
 }
 
-float Path::toRPM(float linearVel) {
-    float corrected = linearVel / (M_PI * this->config.drivetrain.wheelDiameter) * 60 / this->config.driven * this->config.driving;
+float Path::toRPM(float linearVel) { //TODO: check driven driving
+    float corrected = linearVel / (M_PI * this->config.drivetrain.wheelDiameter) * 60 * this->config.driven / this->config.driving;
     return corrected;
 }
 
@@ -81,9 +80,11 @@ void Path::ramseteStep(int index) {
     float linearVelTarget = this->velRecordings[index][0]; // target velocities fetched
     float angularVelTarget = this->velRecordings[index][1];
 
+    lemlib::Pose pose = this->config.chassis.getPose(true);
+
     float errorLateral = findLateralError(targetX, targetY); // lateral or crosstrack error calculated
     float errorLongitudinal = findLongitudinalError(targetX, targetY); // longitudinal or front/back error calculated
-    float errorTheta = findThetaError(targetTheta); // angular error calculated
+    float errorTheta = targetTheta - pose.theta; // angular error calculated
 
     float gain = 2 * zeta * std::sqrt(
         std::pow(angularVelTarget, 2) + (beta * std::pow(linearVelTarget, 2))
@@ -104,11 +105,10 @@ void Path::ramseteStep(int index) {
         * errorLateral / errorTheta
     ); // angular command calculated with: beta * linear velocity target * sin(angle error) * lateral error / angle error
 
-    float tangentialVelCommand = angularVelCommand * this->config.drivetrain.trackWidth / 2; //convert angular vel command from rad/s to in/s
-    //TODO: multiply or divide by two?
+    // float tangentialVelCommand = angularVelCommand * this->config.drivetrain.trackWidth / 2; //convert angular vel command from rad/s to in/s
 
-    float leftRPMCommand = toRPM(linearVelCommand + tangentialVelCommand); //convert in/s of wheels to rpm
-    float rightRPMCommand = toRPM(linearVelCommand - tangentialVelCommand);
+    float leftRPMCommand = toRPM(linearVelCommand + (angularVelCommand * this->config.drivetrain.trackWidth / 2)); //convert in/s of wheels to rpm
+    float rightRPMCommand = toRPM(linearVelCommand - (angularVelCommand * this->config.drivetrain.trackWidth / 2));
 
     float maxRPM = std::max(std::abs(leftRPMCommand), std::abs(rightRPMCommand));
 
@@ -121,10 +121,8 @@ void Path::ramseteStep(int index) {
     this->config.leftMotors.move_velocity(leftRPMCommand); // velocity sent to motors
     this->config.rightMotors.move_velocity(rightRPMCommand);
 
-    leftBack.move_velocity(leftRPMCommand / 3); //*: sketch 55w implementation lol but it'll work
+    leftBack.move_velocity(leftRPMCommand / 3); //* sketch 55w implementation lol but it'll work
     rightBack.move_velocity(rightRPMCommand / 3);
-
-    lemlib::Pose pose = this->config.chassis.getPose();
 
     debugLine.append("current x: " + std::to_string(pose.x) + "\n"); //*DEBUG LINES FOR CURRENT XYTHETA
     debugLine.append("current y: " + std::to_string(pose.y) + "\n");
@@ -147,8 +145,8 @@ void Path::ramseteStep(int index) {
     debugLine.append("angular vel target: " + std::to_string(angularVelTarget) + "\n\n");
 
     debugLine.append("linear vel command: " + std::to_string(linearVelCommand) + "\n");//*DEBUG LINES FOR VEL COMMANDS
-    debugLine.append("angular vel command: " + std::to_string(angularVelCommand) + "\n");
-    debugLine.append("tangential vel command: " + std::to_string(tangentialVelCommand) + "\n\n");
+    debugLine.append("angular vel command: " + std::to_string(angularVelCommand) + "\n\n");
+    // debugLine.append("tangential vel command: " + std::to_string(tangentialVelCommand) + "\n\n");
 
     debugLine.append("left rpm command: " + std::to_string(linearVelCommand) + "\n"); //*DEBUG LINE FOR LEFT AND RIGHT RPM
     debugLine.append("right rpm command: " + std::to_string(angularVelTarget) + "\n\n\n\n"); //*LAST DEBUG LINE

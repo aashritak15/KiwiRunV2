@@ -69,7 +69,15 @@ void kiwiRunControl() {
     while(true) {
 
         int rawThrottle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rawTurn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+        int rawTurn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+
+        if (std::abs(rawTurn) < 15) {
+            rawTurn = 0;
+        }
+        
+        if (std::abs(rawThrottle) < 15) {
+            rawThrottle = 0;
+        }
 
         float throttle = rawThrottle;
         float turn = rawTurn * 0.9;

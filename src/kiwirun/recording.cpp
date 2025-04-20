@@ -9,12 +9,17 @@
 namespace kiwi {
 
     void Config::write() {
+
         pros::Task writeTask([&]() {
             nlohmann::json master = nlohmann::json::array();  // Holds all points
 
             int index = 0;
 
             int count = 1;
+
+            while(leftMotors.get_actual_velocity() < 10 && rightMotors.get_actual_velocity() < 10) {
+                pros::delay(10);
+            }
 
             while (true) {
                 nlohmann::json pointData;
@@ -49,8 +54,6 @@ namespace kiwi {
                 pros::delay(10);
             }
 
-            intakeState = 1; //* the break logic works
-
             pros::delay(500);
 
             std::ofstream file("/usd/path.json", std::ios::out | std::ios::trunc);
@@ -71,15 +74,27 @@ namespace kiwi {
     }
 
     float Config::getWheelLinearVel(float rpm) {
-        return rpm / 60 * M_PI * this->drivetrain.wheelDiameter * this->driven / this->driving; //TODO: check if wheel diameter reference works
+        return rpm / 60 * M_PI * this->drivetrain.wheelDiameter * this->driving / this->driven; //TODO: check driving/driven
     }
 
     float Config::getChassisLinearVel(float leftRPM, float rightRPM) {
-        return (getWheelLinearVel(leftRPM) + getWheelLinearVel(rightRPM)) / 2;
+        float left = getWheelLinearVel(leftRPM);    
+        float right = getWheelLinearVel(rightRPM);
+
+        // std::cout<<(left + right) / 2<<"\n";
+            
+        return (left + right);
     }
 
     float Config::getChassisAngularVel(float leftRPM, float rightRPM) {
-        return ( getWheelLinearVel(leftRPM) - getWheelLinearVel(rightRPM) ) / this->drivetrain.trackWidth ; //TODO: check if trackwidth reference works 
+        float left = getWheelLinearVel(leftRPM);    
+        float right = getWheelLinearVel(rightRPM);
+
+        float returned = (left - right) / drivetrain.trackWidth;
+
+        std::cout<<returned*180/M_PI<<"\n";
+
+        return returned; //TODO: check if trackwidth reference works 
 
         //TODO: multiply/divide by two????
     }
