@@ -3,6 +3,9 @@
 #include <fstream>
 #include <stdexcept>
 
+#include "drivecode/intake.hpp" //TODO: REMOVE LATER PPLS
+#include "pros/misc.hpp"
+
 namespace kiwi {
 
     void Config::write() {
@@ -33,7 +36,7 @@ namespace kiwi {
                 pointData["angular vel"] = getChassisAngularVel(leftRPM, rightRPM);
 
                 for (size_t i = 0; i < subsysStates.size(); i++) {
-                    pointData[subsysNames[i]] = subsysStates[i].get(); // ✅ works
+                    pointData[subsysNames[i]] = subsysStates[i].get();
 
                 }
 
@@ -46,8 +49,21 @@ namespace kiwi {
                 pros::delay(10);
             }
 
-            std::ofstream file("std/path.json");
-            if (!file.is_open()) throw std::runtime_error("Failed to open file.");
+            intakeState = 1; //* the break logic works
+
+            pros::delay(500);
+
+            std::ofstream file("/usd/path.json", std::ios::out | std::ios::trunc);
+
+            pros::delay(500);
+
+            if(!pros::usd::is_installed()) {
+                throw std::runtime_error("there's no sd card ya friggin bum\n");
+            }
+            
+            if(!file.is_open()) {
+                throw std::runtime_error("Failed to open file.");
+            }
 
             file << master.dump(3);  // Write all at once
             file.close();

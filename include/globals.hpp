@@ -1,6 +1,3 @@
-#ifndef GLOBALS_HPP
-#define GLOBALS_HPP
-
 #include "main.h"
 #include "pros/imu.hpp"
 #include "kiwirun/includes.hpp"
@@ -18,4 +15,5 @@ extern lemlib::Drivetrain drivetrain;
 
 extern pros::Imu imu;
 
-#endif
+extern kiwi::Config config;
+extern kiwi::Path firstPath;

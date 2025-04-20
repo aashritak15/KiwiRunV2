@@ -43,8 +43,8 @@ void updatePistons() {
         LEFT_DOINK_BUTTON = false;
     }
 
-    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {  //right doinker state update
-        if (!RIGHT_DOINK_BUTTON) {                                      //toggle on a
+    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {  //right doinker state update
+        if (!RIGHT_DOINK_BUTTON) {                                      //toggle on b
             RIGHT_DOINK_BUTTON = true;
             if (rightDoinkerState == 0) {
                 rightDoinkerState = 1;

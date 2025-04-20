@@ -3,7 +3,6 @@
 #include "globals.hpp"
 
 std::string debugLine;
-std::ofstream debugFile("usd/debug.txt");
 
 namespace kiwi {
 
@@ -34,12 +33,14 @@ float Path::findThetaError(float targetTheta) { // theta error with angle jump s
 }
 
 int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
-    int closestIndex = prevIndex + 1;
+    int closestIndex = prevIndex;
     float closestDist = infinity();
 
     for (int i = closestIndex; i < this->pathRecordings.size(); i++) {
         // loop starting at ONE FORWARD THE PREVIOUSLY CLOSEST POINT! SKIP / STOP TOLERANCE!
         // and ending at the end of the path
+
+        //TODO: this stop tolerance removed. it doesn't work. mannn.
 
         const float dist = std::abs(pose.distance(pathRecordings[i])); // distance to pose
 
@@ -160,6 +161,8 @@ void Path::follow() {
     int index = 0;
 
     this->fetchData(); //fetch data
+
+    std::ofstream debugFile("/usd/debug.txt", std::ios::out | std::ios::trunc);
 
     while (true) {
 

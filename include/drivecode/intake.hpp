@@ -3,9 +3,10 @@
 
 #include "main.h"
 #include "globals.hpp"
+#include <cctype>
 
-inline pros::Motor firstStage(11, pros::MotorGearset::blue);
-inline pros::Motor secondStage(-12, pros::MotorGearset::blue);
+inline pros::Motor firstStage(-11, pros::MotorGearset::blue);
+inline pros::Motor secondStage(12, pros::MotorGearset::blue);
 
 // inline pros::Optical optical(16);
 

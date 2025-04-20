@@ -8,5 +8,9 @@
 #include "drivecode/pistons.hpp"
 
 void matchControl();
+void kiwiRunControl();
+
+void screenInit();
+void screenTask();
 
 #endif

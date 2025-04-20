@@ -12,9 +12,7 @@ void initialize() {
     chassis.calibrate();
     chassis.setPose(0, 0, 0);
 
-    pros::screen::print(pros::E_TEXT_MEDIUM, 1, "hello world");
-    pros::screen::print(pros::E_TEXT_MEDIUM, 2, "hello world");
-
+    screenInit();
     intakeInit();
     pistonInit();
     ladyBrownInit();
@@ -24,10 +22,6 @@ void disabled() {}
 
 void competition_initialize() {}
 
-// get a path used for pure pursuit
-// this needs to be put outside a function
-ASSET(example_txt); // '.' replaced with "_" to make c++ happy
-
 
 void autonomous() {}
 
@@ -35,6 +29,8 @@ void opcontrol() {
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
     while(true) {
-        matchControl();
+        // kiwiRunControl();
+
+        firstPath.follow();
     }
 }

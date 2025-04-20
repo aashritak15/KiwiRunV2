@@ -1,7 +1,12 @@
 #include "kiwirun/includes.hpp"
 #include "drivecode/intake.hpp"
+#include "drivecode/pistons.hpp"
+#include "drivecode/ladybrown.hpp"
+#include "kiwirun/path.hpp"
+#include "lemlib/chassis/trackingWheel.hpp"
 #include "pros/abstract_motor.hpp"
 #include "pros/motors.hpp"
+#include "pros/rotation.hpp"
 #include "globals.hpp"
 #include <functional>
 
@@ -13,9 +18,13 @@ pros::MotorGroup rightMotors({5, 3}, pros::MotorGearset::blue);
 pros::Motor leftBack(-8, pros::MotorGearset::green);
 pros::Motor rightBack(14, pros::MotorGearset::green);
 
-pros::Imu imu(0);
+pros::Imu imu(15);
 
-lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 12.75,
+pros::Rotation lateralSensor(21);
+
+lemlib::TrackingWheel lateralTracker(&lateralSensor, lemlib::Omniwheel::NEW_2, -0.375);
+
+lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 11.5625,
                               lemlib::Omniwheel::NEW_275, 450, 2);
 
 
@@ -23,7 +32,7 @@ lemlib::ControllerSettings linearController(0, 0, 0, 3, 1, 100, 3, 500, 20);
 lemlib::ControllerSettings angularController(0, 0, 0, 3, 1, 100, 3, 500, 0);
 
 
-lemlib::OdomSensors sensors(nullptr, nullptr, nullptr, nullptr, &imu);
+lemlib::OdomSensors sensors(nullptr, nullptr, &lateralTracker, nullptr, &imu);
 
 
 lemlib::ExpoDriveCurve throttleCurve(3, 10, 1.019);
@@ -32,4 +41,18 @@ lemlib::ExpoDriveCurve steerCurve(3, 10, 1.019);
 
 lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, &throttleCurve, &steerCurve);
 
+std::vector<std::reference_wrapper<float>> subsysStates = {intakeState, clampState, lbTarget};
+std::vector<std::string> subsysNames = {"intake", "mogo clamp", "lb target"};
 
+kiwi::Config config(0.5, 0.3, 3, 4, 
+    subsysStates,
+    subsysNames,
+    chassis,
+    drivetrain,
+    leftMotors,
+    rightMotors,
+    controller
+);
+
+
+kiwi::Path firstPath(config, "/usd/path.json");
