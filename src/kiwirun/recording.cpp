@@ -24,13 +24,15 @@ namespace kiwi {
             const int historySize = 5; 
 
             auto getAverage = [&](std::deque<float>& history, float newValue) {
-                 history.push_back(newValue);
+                 history.push_back(newValue); //add the newst hsitory value to the end 
 
                     if (history.size() > historySize) {
-                        history.pop_front();
+                        history.pop_front(); //remove the oldist value if psts 5 vlaues 
                     }
 
                     float total = 0;
+
+                    //sum up all the values in the current 
 
                     for (float value : history) {
                         total += value;
