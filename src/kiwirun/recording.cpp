@@ -2,6 +2,7 @@
 #include "globals.hpp"
 #include <fstream>
 #include <stdexcept>
+#include <deque> 
 
 #include "drivecode/intake.hpp" //TODO: REMOVE LATER PPLS
 #include "pros/misc.hpp"
@@ -16,6 +17,28 @@ namespace kiwi {
             int index = 0;
 
             int count = 1;
+
+            std::deque<float> linearVelocityHistory;
+            std::deque<float> angularVelocityHistory;
+
+            const int historySize = 5; 
+
+            auto getAverage = [&](std::deque<float>& history, float newValue) {
+                 history.push_back(newValue);
+
+                    if (history.size() > historySize) {
+                        history.pop_front();
+                    }
+
+                    float total = 0;
+
+                    for (float value : history) {
+                        total += value;
+                    }
+
+                    return total / history.size();
+                };
+
 
             while(leftMotors.get_actual_velocity() < 10 && rightMotors.get_actual_velocity() < 10) {
                 pros::delay(10);
@@ -37,8 +60,14 @@ namespace kiwi {
                 pointData["y pos"] = yPos;
                 pointData["theta"] = thetaPos;
 
-                pointData["linear vel"] = getChassisLinearVel(leftRPM, rightRPM);
-                pointData["angular vel"] = getChassisAngularVel(leftRPM, rightRPM);
+                float rawLinearVel = getChassisLinearVel(leftRPM, rightRPM);
+                float rawAngularVel = getChassisAngularVel(leftRPM, rightRPM);
+
+                float smoothedLinearVel = getAverage(linearVelocityHistory, rawLinearVel);
+                float smoothedAngularVel = getAverage(angularVelocityHistory, rawAngularVel);
+
+                pointData["linear vel"] = smoothedLinearVel;
+                pointData["angular vel"] = smoothedAngularVel;
 
                 for (size_t i = 0; i < subsysStates.size(); i++) {
                     pointData[subsysNames[i]] = subsysStates[i].get();
