@@ -71,6 +71,8 @@ namespace kiwi {
                 // pointData["linear vel"] = smoothedLinearVel;
                 // pointData["angular vel"] = smoothedAngularVel;
 
+                //TODO: possibly add back velocity smoothing
+
                 pointData["linear vel"] = rawLinearVel;
                 pointData["angular vel"] = rawAngularVel;
 

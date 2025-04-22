@@ -3,12 +3,14 @@
 
 #include "main.h"
 #include "globals.hpp"
+#include "pros/distance.hpp"
 #include <cctype>
 
 inline pros::Motor firstStage(-11, pros::MotorGearset::blue);
 inline pros::Motor secondStage(12, pros::MotorGearset::blue);
 
-// inline pros::Optical optical(16);
+inline pros::Optical optical(21); //TODO: add port
+inline pros::Distance distance(21); //TODO: add port
 
 void intakeInit();
 

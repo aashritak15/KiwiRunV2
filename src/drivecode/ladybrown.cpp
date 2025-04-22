@@ -14,12 +14,6 @@ void ladyBrownInit() {
 }
 
 void updateLB() {
-    if(pidActive)
-        controller.set_text(0,0,"pid on    ");
-    else
-        controller.set_text(0,0,"pid off     ");
-
-
     if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         pidActive = true;
         lbTarget = 30;
@@ -32,14 +26,12 @@ void updateLB() {
         pidActive = true;
         lbTarget = 150;
     }
-
-
 }
 
 void runLB() {
 
-    float kP = 0.1;
-    float kD = 0;
+    const float kP = 0.1;
+    const float kD = 0;
     float prevError = 0;
 
     int count = 1;
@@ -79,7 +71,7 @@ void runLB() {
             ladyBrown.move_velocity(command); //move lb
         }
 
-        std::cout<<lbRotation.get_position() / 100 <<"\n";
+        // std::cout<<lbRotation.get_position() / 100 <<"\n";
 
         pros::delay(10);
     }

@@ -7,9 +7,13 @@ bool l2Pressed = false;
 bool downPressed = false;
 bool upPressed = false;
 
-float intakeState = 0;
-
+//color sort states
+bool throwNext = false;
+bool throwNextNext = false;
+bool ringDetected = false;
 int sortState = 0;
+
+float intakeState = 0;
 
 void intakeInit() {
     firstStage.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -83,6 +87,8 @@ void runIntake() {
         } else if (intakeState == 2) {
             firstStage.move_voltage(-12000);
             secondStage.move_voltage(-12000);
+            throwNext = false;
+            throwNextNext = false;
         } else if(intakeState == 3) {
             firstStage.move_voltage(12000);
         }
@@ -93,15 +99,65 @@ void runIntake() {
 
 void colorSort() {
     while(true) {
-        if(sortState == 0)
-            controller.set_text(0, 0, "no sort         ");
-        if(sortState == 1)
-            controller.set_text(0, 0, "sort red         ");
-        if(sortState == 2)
-            controller.set_text(0, 0, "sort blue         ");
+        //no throw logic
+        if(sortState == 0) {
+            controller.set_text(0, 0, "no sort   ");
+            throwNext = false;
+            throwNextNext = false;
+            ringDetected = false;
+        }
 
-        
+        //throw red logic
+        else if(sortState == 1) {
+            controller.set_text(0, 0, "sort red   ");
 
+            if(0 < optical.get_hue() && optical.get_hue() < 30) { //if a newly detected ring is red,
+                if(!ringDetected) { //and a ring hasn't been detected yet
+                    if(throwNext) {
+                        throwNextNext = true; //if there's a ring on second stage to be thrown and a new ring is detected, throw it too
+                    }
+                    throwNext = true; //throw the next ring
+                    ringDetected = true;
+                }
+            } else {
+                ringDetected = false;
+            }
 
+        }
+
+        //throw blue logic
+        else if(sortState == 2) {
+            controller.set_text(0, 0, "sort red   ");
+
+            if(0 < optical.get_hue() && optical.get_hue() < 30) { //if a newly detected ring is red,
+                if(!ringDetected) { //and a ring hasn't been detected yet
+                    if(throwNext) {
+                        throwNextNext = true; //if there's a ring on second stage to be thrown and a new ring is detected, throw it too
+                    }
+                    throwNext = true; //throw the next ring
+                    ringDetected = true;
+                }
+            } else {
+                ringDetected = false;
+            }
+
+        }
+
+        //actual throw logic
+        if((throwNext || throwNextNext) && distance.get() < 10) { //if throw next and a ring is about to be scored,
+            float prevIntake = intakeState;
+
+            intakeState = 2; //throw
+            pros::delay(100);
+            intakeState = prevIntake;
+
+            if(throwNext) { //update vars
+                throwNext = false;
+            } else {
+                throwNextNext = false;
+            }
+        }
+
+        pros::delay(10);
     }
 }

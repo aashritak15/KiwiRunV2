@@ -43,8 +43,6 @@ int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
         // loop starting at ONE FORWARD THE PREVIOUSLY CLOSEST POINT! SKIP / STOP TOLERANCE!
         // and ending at the end of the path
 
-        //TODO: this stop tolerance ADDED BACK
-
         const float dist = std::abs(pose.distance(pathRecordings[i])); // distance to pose
 
         if (dist < closestDist) { // if tested point is closer, record it and move on
@@ -57,13 +55,6 @@ int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
     }
 
     return -1; // you're screwed OR end of path reached
-}
-
-lemlib::Pose targetPose() {
-    //1. draw a circle around the pose
-    //2. radiate out to get one pose and the pose forward from that
-    //3. circle intersect the segment and the radiation?
-    //4. if so, find the intersection point
 }
 
 void Path::updateSubsystems(int index) { //TODO: check
