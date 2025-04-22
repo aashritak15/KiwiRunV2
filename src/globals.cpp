@@ -27,19 +27,12 @@ lemlib::TrackingWheel lateralTracker(&lateralSensor, lemlib::Omniwheel::NEW_2, -
 lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 11.5625,
                               lemlib::Omniwheel::NEW_275, 450, 2);
 
-
 lemlib::ControllerSettings linearController(0, 0, 0, 3, 1, 100, 3, 500, 20);
 lemlib::ControllerSettings angularController(0, 0, 0, 3, 1, 100, 3, 500, 0);
 
-
 lemlib::OdomSensors sensors(nullptr, nullptr, &lateralTracker, nullptr, &imu);
 
-
-lemlib::ExpoDriveCurve throttleCurve(3, 10, 1.019);
-lemlib::ExpoDriveCurve steerCurve(3, 10, 1.019);
-
-
-lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, &throttleCurve, &steerCurve);
+lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, nullptr, nullptr);
 
 std::vector<std::reference_wrapper<float>> subsysStates = {intakeState, clampState, lbTarget};
 std::vector<std::string> subsysNames = {"intake", "mogo clamp", "lb target"};

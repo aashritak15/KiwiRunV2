@@ -3,8 +3,6 @@
 #include <fstream>
 #include <stdexcept>
 #include <deque> 
-
-#include "drivecode/intake.hpp" //TODO: REMOVE LATER PPLS
 #include "pros/misc.hpp"
 
 namespace kiwi {
@@ -24,10 +22,10 @@ namespace kiwi {
             const int historySize = 5; 
 
             auto getAverage = [&](std::deque<float>& history, float newValue) {
-                 history.push_back(newValue); //add the newst history value to the end 
+                 history.push_back(newValue); //add the newest history value to the end 
 
                     if (history.size() > historySize) {
-                        history.pop_front(); //remove the oldist value if psts 5 vlaues 
+                        history.pop_front(); //remove the oldest value if past 5 vlaues 
                     }
 
                     float total = 0;
@@ -71,7 +69,7 @@ namespace kiwi {
                 // pointData["linear vel"] = smoothedLinearVel;
                 // pointData["angular vel"] = smoothedAngularVel;
 
-                //TODO: possibly add back velocity smoothing
+                //TODO: maybe add back velocity smoothing
 
                 pointData["linear vel"] = rawLinearVel;
                 pointData["angular vel"] = rawAngularVel;
@@ -110,7 +108,7 @@ namespace kiwi {
     }
 
     float Config::getWheelLinearVel(float rpm) {
-        return rpm / 60 * M_PI * this->drivetrain.wheelDiameter * this->driving / this->driven; //TODO: check driving/driven
+        return rpm / 60 * M_PI * this->drivetrain.wheelDiameter * this->driving / this->driven; 
     }
 
     float Config::getChassisLinearVel(float leftRPM, float rightRPM) {
@@ -126,9 +124,7 @@ namespace kiwi {
 
         float returned = (left - right) / drivetrain.trackWidth;
 
-        return returned; //TODO: check if trackwidth reference works 
-
-        //TODO: multiply/divide by two????
+        return returned;
     }
 
 };

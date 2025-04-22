@@ -20,7 +20,6 @@ class Path {
 
         float findLateralError(float targetX, float targetY);
         float findLongitudinalError(float targetX, float targetY);
-        float findThetaError(float targetTheta);
         int findClosestPoint(lemlib::Pose pose, int prevIndex);
 
         float toRPM(float linearVel);

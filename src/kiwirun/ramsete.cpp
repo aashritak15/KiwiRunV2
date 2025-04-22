@@ -26,11 +26,6 @@ float Path::findLongitudinalError(float targetX, float targetY) { // longitudina
     return cos(currentPose.theta) * std::sqrt(deltaX * deltaX + deltaY * deltaY);
 }
 
-float Path::findThetaError(float targetTheta) { // theta error with angle jump sanitation
-    float currentTheta = this->config.chassis.getPose(true).theta; //TODO: removed angle jump sanitation
-    return targetTheta - currentTheta;
-}
-
 int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
     int closestIndex = prevIndex;
     float closestDist = infinity();
@@ -57,23 +52,23 @@ int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
     return -1; // you're screwed OR end of path reached
 }
 
-void Path::updateSubsystems(int index) { //TODO: check
+void Path::updateSubsystems(int index) { //TODO: test subsystem functionality
     for (int i = 0; i < this->subsysRecordings[index].size(); i++) {
         this->config.subsysStates[i] = this->subsysRecordings[index][i]; // loop through all subsystem states and update
     }
 }
 
-float Path::toRPM(float linearVel) { //TODO: check driven driving
+float Path::toRPM(float linearVel) {
     float corrected = linearVel / (M_PI * this->config.drivetrain.wheelDiameter) * 60 * this->config.driven / this->config.driving;
     return corrected;
 }
 
 float Path::toMeters(float inchMeasurement) {
-    return inchMeasurement / 39.3701; //TODO: CHECK
+    return inchMeasurement / 39.3701; 
 }
 
 float Path::toInches(float meterMeasurement) {
-    return meterMeasurement * 39.3701; //TODO: CHECK
+    return meterMeasurement * 39.3701;
 }
 
 void Path::ramseteStep(int index) {
