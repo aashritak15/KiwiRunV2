@@ -9,35 +9,36 @@ bool pidToggle = false;
 void ladyBrownInit() {
     ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     ladyBrown.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-    lbRotation.reset_position();
 
     pros::Task lbTask(runLB, "ladybrown");
 }
 
 void updateLB() {
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) { //TODO: change button
-        if (!pidToggle) { //if button right pressed (toggle), activate pid
-            pidToggle = true;
-            pidActive = true;
+    if(pidActive)
+        controller.set_text(0,0,"pid on    ");
+    else
+        controller.set_text(0,0,"pid off     ");
 
-            if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-                lbTarget = 30;
-            if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-                lbTarget = 0;
-            if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT))
-                lbTarget = 150;
 
-            //lbTarget = 30; //TODO: change lb target
-        }
-    } else {
-        pidToggle = false; //pidActive deactivated when goal reached
+    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+        pidActive = true;
+        lbTarget = 30;
     }
+    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+        pidActive = true;
+        lbTarget = 0;
+    }
+    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+        pidActive = true;
+        lbTarget = 150;
+    }
+
 
 }
 
 void runLB() {
 
-    float kP = 0;
+    float kP = 0.1;
     float kD = 0;
     float prevError = 0;
 
@@ -45,13 +46,13 @@ void runLB() {
 
     while (true) {
         if(!pidActive) { //if pid inactive, enable right stick control 
-            float command = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / 127.0 * 100.0 * 0.9; 
+            float command = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / 127.0 * 100.0 * -0.9; 
             ladyBrown.move_velocity(command);
 
             pros::delay(10);
 
         } else { //if pid active, run pid
-            float error = lbTarget - lbRotation.get_angle();
+            float error = lbTarget - lbRotation.get_angle() / 100.0;
             float derivative = prevError - error;
 
             float pTerm = error * kP;
@@ -77,6 +78,8 @@ void runLB() {
 
             ladyBrown.move_velocity(command); //move lb
         }
+
+        std::cout<<lbRotation.get_position() / 100 <<"\n";
 
         pros::delay(10);
     }

@@ -39,11 +39,11 @@ int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
         return -1;
     } //end of path reached
 
-    for (int i = closestIndex; i < this->pathRecordings.size(); i++) {
+    for (int i = closestIndex + 1; i < this->pathRecordings.size(); i++) {
         // loop starting at ONE FORWARD THE PREVIOUSLY CLOSEST POINT! SKIP / STOP TOLERANCE!
         // and ending at the end of the path
 
-        //TODO: this stop tolerance REMOVED
+        //TODO: this stop tolerance ADDED BACK
 
         const float dist = std::abs(pose.distance(pathRecordings[i])); // distance to pose
 

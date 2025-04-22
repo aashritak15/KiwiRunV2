@@ -66,6 +66,7 @@ void matchControl() {
 
         updateIntake();
         updatePistons();
+        updateLB();
 
         pros::delay(10);
     }

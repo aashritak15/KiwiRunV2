@@ -124,8 +124,6 @@ namespace kiwi {
 
         float returned = (left - right) / drivetrain.trackWidth;
 
-        std::cout<<returned*180/M_PI<<"\n";
-
         return returned; //TODO: check if trackwidth reference works 
 
         //TODO: multiply/divide by two????
