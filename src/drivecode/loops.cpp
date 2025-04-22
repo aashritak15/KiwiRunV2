@@ -54,6 +54,16 @@ void matchControl() {
         rightMotors.move_voltage(rightCommand);
         rightBack.move_voltage(rightCommand);
 
+        // std::cout<<leftMotors.get_actual_velocity_all()[0]
+        // <<" "
+        // <<leftMotors.get_actual_velocity_all()[1]
+        // <<"\n";
+
+        // std::cout<<rightMotors.get_actual_velocity_all()[0]
+        // <<" "
+        // <<rightMotors.get_actual_velocity_all()[1]
+        // <<"\n\n";
+
         updateIntake();
         updatePistons();
 
@@ -69,7 +79,7 @@ void kiwiRunControl() {
     while(true) {
 
         int rawThrottle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rawTurn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        int rawTurn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
 
         if (std::abs(rawTurn) < 15) {
             rawTurn = 0;

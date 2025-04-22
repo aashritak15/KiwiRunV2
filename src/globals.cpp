@@ -12,11 +12,11 @@
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-pros::MotorGroup leftMotors({-1, -20}, pros::MotorGearset::blue);
-pros::MotorGroup rightMotors({5, 3}, pros::MotorGearset::blue);
+pros::MotorGroup leftMotors({-1, -8}, pros::MotorGearset::blue);
+pros::MotorGroup rightMotors({5, 14}, pros::MotorGearset::blue);
 
-pros::Motor leftBack(-8, pros::MotorGearset::green);
-pros::Motor rightBack(14, pros::MotorGearset::green);
+pros::Motor leftBack(-20, pros::MotorGearset::green);
+pros::Motor rightBack(3, pros::MotorGearset::green);
 
 pros::Imu imu(15);
 

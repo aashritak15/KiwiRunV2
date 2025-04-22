@@ -24,7 +24,7 @@ namespace kiwi {
             const int historySize = 5; 
 
             auto getAverage = [&](std::deque<float>& history, float newValue) {
-                 history.push_back(newValue); //add the newst hsitory value to the end 
+                 history.push_back(newValue); //add the newst history value to the end 
 
                     if (history.size() > historySize) {
                         history.pop_front(); //remove the oldist value if psts 5 vlaues 
@@ -49,7 +49,7 @@ namespace kiwi {
             while (true) {
                 nlohmann::json pointData;
 
-                lemlib::Pose pose = this->chassis.getPose();
+                lemlib::Pose pose = this->chassis.getPose(true);
                 float leftRPM = leftMotors.get_actual_velocity();
                 float rightRPM = rightMotors.get_actual_velocity();
 
@@ -65,11 +65,14 @@ namespace kiwi {
                 float rawLinearVel = getChassisLinearVel(leftRPM, rightRPM);
                 float rawAngularVel = getChassisAngularVel(leftRPM, rightRPM);
 
-                float smoothedLinearVel = getAverage(linearVelocityHistory, rawLinearVel);
-                float smoothedAngularVel = getAverage(angularVelocityHistory, rawAngularVel);
+                // float smoothedLinearVel = getAverage(linearVelocityHistory, rawLinearVel);
+                // float smoothedAngularVel = getAverage(angularVelocityHistory, rawAngularVel);
 
-                pointData["linear vel"] = smoothedLinearVel;
-                pointData["angular vel"] = smoothedAngularVel;
+                // pointData["linear vel"] = smoothedLinearVel;
+                // pointData["angular vel"] = smoothedAngularVel;
+
+                pointData["linear vel"] = rawLinearVel;
+                pointData["angular vel"] = rawAngularVel;
 
                 for (size_t i = 0; i < subsysStates.size(); i++) {
                     pointData[subsysNames[i]] = subsysStates[i].get();
@@ -92,7 +95,7 @@ namespace kiwi {
             pros::delay(500);
 
             if(!pros::usd::is_installed()) {
-                throw std::runtime_error("there's no sd card ya friggin bum\n");
+                throw std::runtime_error("No SD card present.\n");
             }
             
             if(!file.is_open()) {
@@ -111,10 +114,8 @@ namespace kiwi {
     float Config::getChassisLinearVel(float leftRPM, float rightRPM) {
         float left = getWheelLinearVel(leftRPM);    
         float right = getWheelLinearVel(rightRPM);
-
-        // std::cout<<(left + right) / 2<<"\n";
             
-        return (left + right);
+        return (left + right) / 2;
     }
 
     float Config::getChassisAngularVel(float leftRPM, float rightRPM) {

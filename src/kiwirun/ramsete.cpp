@@ -10,20 +10,20 @@ float Path::findLateralError(float targetX, float targetY) { // lateral error
 
     lemlib::Pose currentPose = this->config.chassis.getPose(true);
 
-    float deltaX = currentPose.x - targetX;
-    float deltaY = currentPose.y - targetY;
+    float deltaX = toMeters(currentPose.x) - targetX;
+    float deltaY = toMeters(currentPose.y) - targetY;
 
-    return -deltaX * sin(currentPose.theta) + deltaY * cos(currentPose.theta);
+    return sin(currentPose.theta) * std::sqrt(deltaX * deltaX + deltaY * deltaY);
 }
 
 float Path::findLongitudinalError(float targetX, float targetY) { // longitudinal error
 
     lemlib::Pose currentPose = this->config.chassis.getPose(true);
 
-    float deltaX = currentPose.x - targetX;
-    float deltaY = currentPose.y - targetY;
+    float deltaX = toMeters(currentPose.x) - targetX;
+    float deltaY = toMeters(currentPose.y) - targetY;
 
-    return deltaX * cos(currentPose.theta) + deltaY * sin(currentPose.theta);
+    return cos(currentPose.theta) * std::sqrt(deltaX * deltaX + deltaY * deltaY);
 }
 
 float Path::findThetaError(float targetTheta) { // theta error with angle jump sanitation
@@ -35,11 +35,15 @@ int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
     int closestIndex = prevIndex;
     float closestDist = infinity();
 
+    if(closestIndex + 1 >= pathRecordings.size()) {
+        return -1;
+    } //end of path reached
+
     for (int i = closestIndex; i < this->pathRecordings.size(); i++) {
         // loop starting at ONE FORWARD THE PREVIOUSLY CLOSEST POINT! SKIP / STOP TOLERANCE!
         // and ending at the end of the path
 
-        //TODO: this stop tolerance removed. it doesn't work. mannn.
+        //TODO: this stop tolerance REMOVED
 
         const float dist = std::abs(pose.distance(pathRecordings[i])); // distance to pose
 
@@ -55,6 +59,13 @@ int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
     return -1; // you're screwed OR end of path reached
 }
 
+lemlib::Pose targetPose() {
+    //1. draw a circle around the pose
+    //2. radiate out to get one pose and the pose forward from that
+    //3. circle intersect the segment and the radiation?
+    //4. if so, find the intersection point
+}
+
 void Path::updateSubsystems(int index) { //TODO: check
     for (int i = 0; i < this->subsysRecordings[index].size(); i++) {
         this->config.subsysStates[i] = this->subsysRecordings[index][i]; // loop through all subsystem states and update
@@ -66,6 +77,14 @@ float Path::toRPM(float linearVel) { //TODO: check driven driving
     return corrected;
 }
 
+float Path::toMeters(float inchMeasurement) {
+    return inchMeasurement / 39.3701; //TODO: CHECK
+}
+
+float Path::toInches(float meterMeasurement) {
+    return meterMeasurement * 39.3701; //TODO: CHECK
+}
+
 void Path::ramseteStep(int index) {
 
     float beta = this->config.beta; // beta and zeta values fetched
@@ -73,27 +92,29 @@ void Path::ramseteStep(int index) {
 
     lemlib::Pose target = this->pathRecordings[index]; // target pose fetched
 
-    float targetX = target.x; // target pose data fetched
-    float targetY = target.y;
+    float targetX = toMeters(target.x); //in meters
+    float targetY = toMeters(target.y); //in meters
     float targetTheta = target.theta;
 
-    float linearVelTarget = this->velRecordings[index][0]; // target velocities fetched
+    float linearVelTarget = toMeters(this->velRecordings[index][0]); // target velocities fetched
     float angularVelTarget = this->velRecordings[index][1];
 
     lemlib::Pose pose = this->config.chassis.getPose(true);
 
-    float errorLateral = findLateralError(targetX, targetY); // lateral or crosstrack error calculated
-    float errorLongitudinal = findLongitudinalError(targetX, targetY); // longitudinal or front/back error calculated
-    float errorTheta = targetTheta - pose.theta; // angular error calculated
+    float errorLateral = findLateralError(targetX, targetY); // lateral or crosstrack error calculated in meters
+    float errorLongitudinal = findLongitudinalError(targetX, targetY); // longitudinal or front/back error calculated in meters
+    float errorTheta = fmod((targetTheta - pose.theta), 360.0); // angular error calculated
 
     float gain = 2 * zeta * std::sqrt(
         std::pow(angularVelTarget, 2) + (beta * std::pow(linearVelTarget, 2))
     ); // master gain calculated with: sqrt[(angular velocity)^2 + beta * (linear velocity)^2]
 
-    float linearVelCommand = 
+    float linearVelCommand =
         (linearVelTarget * std::cos(errorTheta)) 
         + (gain * errorLongitudinal
     ); // linear command calculated with: [linear velocity target * cos(angle error)] + (gain * longitudinal error)
+
+    linearVelCommand = toInches(linearVelCommand); //switch back to inches
 
     if(std::abs(errorTheta) < 0.01) { //*divide by zero protection
         errorTheta = 0.01;
@@ -105,10 +126,14 @@ void Path::ramseteStep(int index) {
         * errorLateral / errorTheta
     ); // angular command calculated with: beta * linear velocity target * sin(angle error) * lateral error / angle error
 
-    // float tangentialVelCommand = angularVelCommand * this->config.drivetrain.trackWidth / 2; //convert angular vel command from rad/s to in/s
+    if(angularVelCommand > 3.5) {
+        angularVelCommand = 3.5;
+    } // angular vel clamp
 
-    float leftRPMCommand = toRPM(linearVelCommand + (angularVelCommand * this->config.drivetrain.trackWidth / 2)); //convert in/s of wheels to rpm
-    float rightRPMCommand = toRPM(linearVelCommand - (angularVelCommand * this->config.drivetrain.trackWidth / 2));
+    float tangentialVelCommand = angularVelCommand * this->config.drivetrain.trackWidth / 2; //convert angular vel command from rad/s to in/s
+
+    float leftRPMCommand = toRPM(linearVelCommand + tangentialVelCommand); //convert in/s of wheels to rpm
+    float rightRPMCommand = toRPM(linearVelCommand - tangentialVelCommand);
 
     float maxRPM = std::max(std::abs(leftRPMCommand), std::abs(rightRPMCommand));
 
@@ -124,35 +149,45 @@ void Path::ramseteStep(int index) {
     leftBack.move_velocity(leftRPMCommand / 3); //* sketch 55w implementation lol but it'll work
     rightBack.move_velocity(rightRPMCommand / 3);
 
-    debugLine.append("current x: " + std::to_string(pose.x) + "\n"); //*DEBUG LINES FOR CURRENT XYTHETA
-    debugLine.append("current y: " + std::to_string(pose.y) + "\n");
-    debugLine.append("current theta: " + std::to_string(pose.theta) + "\n\n");
+    debugLine.append("current x inches: " + std::to_string(pose.x) + "\n"); //*DEBUG LINES FOR CURRENT XYTHETA
+    debugLine.append("current y inches: " + std::to_string(pose.y) + "\n");
 
-    debugLine.append("x target: " + std::to_string(targetX) + "\n"); //*DEBUG LINES FOR TARGET XYTHETA
-    debugLine.append("y target: " + std::to_string(targetY) + "\n");
-    debugLine.append("theta target: " + std::to_string(targetTheta) + "\n\n");
+    debugLine.append("current x meters: " + std::to_string(toMeters(pose.x)) + "\n"); //*DEBUG LINES FOR CURRENT XYTHETA
+    debugLine.append("current y meters: " + std::to_string(toMeters(pose.y)) + "\n");
+
+    debugLine.append("current theta rad: " + std::to_string(pose.theta) + "\n");
+
+    debugLine.append("target x inches: " + std::to_string(toInches(targetX)) + "\n"); //*DEBUG LINES FOR TARGET XYTHETA
+    debugLine.append("target y inches: " + std::to_string(toInches(targetY)) + "\n");
+
+    debugLine.append("target x meters: " + std::to_string(targetX) + "\n"); //*DEBUG LINES FOR TARGET XYTHETA
+    debugLine.append("target y meters: " + std::to_string(targetY) + "\n");
+
+    debugLine.append("target theta rad: " + std::to_string(targetTheta) + "\n");
+
+    debugLine.append("error lateral inches: " + std::to_string(toInches(errorLateral)) + "\n"); //*DEBUG LINES FOR ERRORS
+    debugLine.append("error longitudinal inches: " + std::to_string(toInches(errorLongitudinal)) + "\n");
+
+    debugLine.append("error lateral meters: " + std::to_string(errorLateral) + "\n"); //*DEBUG LINES FOR ERRORS
+    debugLine.append("error longitudinal meters: " + std::to_string(errorLongitudinal) + "\n");
+
+    debugLine.append("error theta: " + std::to_string(errorTheta) + "\n");
 
     debugLine.append("current left rpm: " + std::to_string(this->config.leftMotors.get_actual_velocity()) + "\n"); //*DEBUG LINES FOR CURRENT RPMS
-    debugLine.append("current right rpm: " + std::to_string(this->config.rightMotors.get_actual_velocity()) + "\n\n");
-
-    debugLine.append("lateral error: " + std::to_string(errorLateral) + "\n"); //*DEBUG LINES FOR ERRORS
-    debugLine.append("longitudinal error: " + std::to_string(errorLongitudinal) + "\n");
-    debugLine.append("theta error: " + std::to_string(errorTheta) + "\n\n");
+    debugLine.append("current right rpm: " + std::to_string(this->config.rightMotors.get_actual_velocity()) + "\n");
 
     debugLine.append("gain: " + std::to_string(gain) + "\n"); //*DEBUG LINES FOR GAIN
 
-    debugLine.append("linear vel target: " + std::to_string(linearVelTarget) + "\n"); //*DEBUG LINES FOR VEL TARGETS
-    debugLine.append("angular vel target: " + std::to_string(angularVelTarget) + "\n\n");
+    debugLine.append("linear vel target meters: " + std::to_string(linearVelTarget) + "\n"); //*DEBUG LINES FOR VEL TARGETS
+    debugLine.append("linear vel target inches: " + std::to_string(toInches(linearVelTarget)) + "\n"); //*DEBUG LINES FOR VEL TARGETS
+    debugLine.append("angular vel target: " + std::to_string(angularVelTarget) + "\n");
 
-    debugLine.append("linear vel command: " + std::to_string(linearVelCommand) + "\n");//*DEBUG LINES FOR VEL COMMANDS
-    debugLine.append("angular vel command: " + std::to_string(angularVelCommand) + "\n\n");
-    // debugLine.append("tangential vel command: " + std::to_string(tangentialVelCommand) + "\n\n");
+    debugLine.append("linear vel command inches: " + std::to_string(linearVelCommand) + "\n");//*DEBUG LINES FOR VEL COMMANDS
+    debugLine.append("angular vel command: " + std::to_string(angularVelCommand) + "\n");
+    debugLine.append("tangential vel command inches: " + std::to_string(tangentialVelCommand) + "\n");
 
-    debugLine.append("left rpm command: " + std::to_string(linearVelCommand) + "\n"); //*DEBUG LINE FOR LEFT AND RIGHT RPM
-    debugLine.append("right rpm command: " + std::to_string(angularVelTarget) + "\n\n\n\n"); //*LAST DEBUG LINE
-
-    //19 debug lines wow
-
+    debugLine.append("left rpm command: " + std::to_string(leftRPMCommand) + "\n"); //*DEBUG LINE FOR LEFT AND RIGHT RPM
+    debugLine.append("right rpm command: " + std::to_string(rightRPMCommand) + "\n\n\n"); //*LAST DEBUG LINE
 }
 
 void Path::follow() {

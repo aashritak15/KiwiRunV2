@@ -24,6 +24,8 @@ class Path {
         int findClosestPoint(lemlib::Pose pose, int prevIndex);
 
         float toRPM(float linearVel);
+        float toInches(float meterMeasurement);
+        float toMeters(float inchMeasurement);
 
         void ramseteStep(int index);
         void updateSubsystems(int index);
