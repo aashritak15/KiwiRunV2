@@ -10,6 +10,34 @@
 #include "globals.hpp"
 #include <functional>
 
+/*
+current button binds
+
+left joystick x: steer
+left joystick y: throttle
+
+right joystick x: unbound
+right joystick y: manual lb control
+
+l1: intake (both stages)
+l2: outtake (both stages)
+
+r1: load lb
+r2: zero lb
+
+a: stop kiwirun recording
+b: doinker right
+x: just first stage
+y: mogo mech
+
+up: cycle color sort
+down: intake state 3 [CHANGE TO DOINKER LEFT]
+left:
+right: cycle descores
+
+scuff buttons are right, down, b, y
+*/
+
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 pros::MotorGroup leftMotors({-1, -8}, pros::MotorGearset::blue);

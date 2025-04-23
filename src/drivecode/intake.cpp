@@ -1,6 +1,7 @@
 #include "drivecode/intake.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
+#include <queue>
 
 bool l1Pressed = false;
 bool l2Pressed = false;
@@ -15,11 +16,17 @@ int sortState = 0;
 
 float intakeState = 0;
 
+std::queue<bool> throwRings;
+bool throwPushed = false;
+
 void intakeInit() {
     firstStage.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     secondStage.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
+    optical.set_led_pwm(100);
+
     pros::Task intakeTask(runIntake, "intake");
+    pros::Task colorTask(colorSort, "color sort");
 }
 
 void updateIntake() {
@@ -49,7 +56,7 @@ void updateIntake() {
         l2Pressed = false;
     }
 
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
         if (!downPressed) {
             downPressed = true;
             if (intakeState == 0 || intakeState == 1 || intakeState == 2) {
@@ -107,27 +114,45 @@ void colorSort() {
             ringDetected = false;
         }
 
+
+        //if detect wrong color then prepare to throw next ring it sees
+        //if detect right color then prepare to not throw
+
         //throw red logic
         else if(sortState == 1) {
             controller.set_text(0, 0, "sort red   ");
 
-            if(0 < optical.get_hue() && optical.get_hue() < 30) { //if a newly detected ring is red,
-                if(!ringDetected) { //and a ring hasn't been detected yet
-                    if(throwNext) {
-                        throwNextNext = true; //if there's a ring on second stage to be thrown and a new ring is detected, throw it too
-                    }
-                    throwNext = true; //throw the next ring
-                    ringDetected = true;
+            if(100 < optical.get_hue() && optical.get_hue() < 200) { //if blue detected
+                if(!throwPushed) {
+                    throwRings.push(true);
+                    throwPushed = false;
+                }
+            } else if (0 < optical.get_hue() && optical.get_hue() < 30) {
+                if(!throwPushed) {
+                    throwRings.push(false);
+                    throwPushed = false;
                 }
             } else {
-                ringDetected = false;
+                throwPushed = false;
             }
+
+            // if(0 < optical.get_hue() && optical.get_hue() < 30) { //if a newly detected ring is red,
+            //     if(!ringDetected) { //and a ring hasn't been detected yet
+            //         if(throwNext) {
+            //             throwNextNext = true; //if there's a ring on second stage to be thrown and a new ring is detected, throw it too
+            //         }
+            //         throwNext = true; //throw the next ring
+            //         ringDetected = true;
+            //     }
+            // } else {
+            //     ringDetected = false;
+            // }
 
         }
 
         //throw blue logic
         else if(sortState == 2) {
-            controller.set_text(0, 0, "sort red   ");
+            controller.set_text(0, 0, "sort blue   ");
 
             if(0 < optical.get_hue() && optical.get_hue() < 30) { //if a newly detected ring is red,
                 if(!ringDetected) { //and a ring hasn't been detected yet
@@ -143,20 +168,30 @@ void colorSort() {
 
         }
 
-        //actual throw logic
-        if((throwNext || throwNextNext) && distance.get() < 10) { //if throw next and a ring is about to be scored,
+        // //actual throw logic
+        // if((throwNext || throwNextNext) && distance.get() < 10) { //if throw next and a ring is about to be scored,
+        //     float prevIntake = intakeState;
+
+        //     intakeState = 2; //throw
+        //     pros::delay(100);
+        //     intakeState = prevIntake;
+
+        //     if(throwNext) { //update vars
+        //         throwNext = false;
+        //     } else {
+        //         throwNextNext = false;
+        //     }
+        // }
+
+        //throw logic
+        if(throwRings.front()) {
             float prevIntake = intakeState;
 
             intakeState = 2; //throw
             pros::delay(100);
             intakeState = prevIntake;
-
-            if(throwNext) { //update vars
-                throwNext = false;
-            } else {
-                throwNextNext = false;
-            }
         }
+        throwRings.pop();
 
         pros::delay(10);
     }

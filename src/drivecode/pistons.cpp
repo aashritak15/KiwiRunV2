@@ -5,8 +5,8 @@ float leftDoinkerState = 0;
 float rightDoinkerState = 0;
 
 bool yPressed = false;
-bool LEFT_DOINK_BUTTON = false;
-bool RIGHT_DOINK_BUTTON = false;
+bool leftPressed = false;
+bool bPressed = false;
 
 void pistonInit() {
     mogoClamp.set_value(false);
@@ -30,9 +30,9 @@ void updatePistons() {
         yPressed = false;
     }
 
-    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {  //left doinker state update
-        if (!LEFT_DOINK_BUTTON) {                                       //toggle on x
-            LEFT_DOINK_BUTTON = true;
+    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {  //left doinker state update
+        if (!leftPressed) {                                             //toggle on down
+            leftPressed = true;
             if (leftDoinkerState == 0) {
                 leftDoinkerState = 1;
             } else {
@@ -40,12 +40,12 @@ void updatePistons() {
             }
         }
     } else {
-        LEFT_DOINK_BUTTON = false;
+        leftPressed = false;
     }
 
     if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {  //right doinker state update
-        if (!RIGHT_DOINK_BUTTON) {                                      //toggle on b
-            RIGHT_DOINK_BUTTON = true;
+        if (!bPressed) {                                           //toggle on b
+            bPressed = true;
             if (rightDoinkerState == 0) {
                 rightDoinkerState = 1;
             } else {
@@ -53,7 +53,7 @@ void updatePistons() {
             }
         }
     } else {
-        RIGHT_DOINK_BUTTON = false;
+        bPressed = false;
     }
 
 }

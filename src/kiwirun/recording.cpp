@@ -81,7 +81,7 @@ namespace kiwi {
 
                 master.push_back(pointData);  // Collect this point into master array
 
-                if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+                if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) { //break condition //TODO: change button
                     break;
                 }
 
