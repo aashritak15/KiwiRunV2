@@ -122,7 +122,7 @@ void colorSort() {
         else if(sortState == 1) {
             controller.set_text(0, 0, "sort red   ");
 
-            if(100 < optical.get_hue() && optical.get_hue() < 200) { //if blue detected
+            if(150 < optical.get_hue() && optical.get_hue() < 220) { //if blue detected
                 if(!throwPushed) {
                     throwRings.push(true);
                     throwPushed = false;
@@ -135,6 +135,17 @@ void colorSort() {
             } else {
                 throwPushed = false;
             }
+
+            //throw logic
+            if(throwRings.front()) {
+                float prevIntake = intakeState;
+
+                intakeState = 2; //throw
+                pros::delay(100);
+                intakeState = prevIntake;
+            }
+            if(!throwRings.empty())
+                throwRings.pop();
 
             // if(0 < optical.get_hue() && optical.get_hue() < 30) { //if a newly detected ring is red,
             //     if(!ringDetected) { //and a ring hasn't been detected yet
@@ -183,15 +194,7 @@ void colorSort() {
         //     }
         // }
 
-        //throw logic
-        if(throwRings.front()) {
-            float prevIntake = intakeState;
-
-            intakeState = 2; //throw
-            pros::delay(100);
-            intakeState = prevIntake;
-        }
-        throwRings.pop();
+        
 
         pros::delay(10);
     }
