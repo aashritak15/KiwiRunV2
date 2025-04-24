@@ -52,7 +52,7 @@ pros::Rotation lateralSensor(21);
 
 lemlib::TrackingWheel lateralTracker(&lateralSensor, lemlib::Omniwheel::NEW_2, -0.25);
 
-lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 11.5625,
+lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, &leftBack, &rightBack, 11.5625,
                               lemlib::Omniwheel::NEW_275, 450, 2);
 
 lemlib::ControllerSettings linearController(0, 0, 0, 3, 1, 100, 3, 500, 20);

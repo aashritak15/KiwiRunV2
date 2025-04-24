@@ -17,10 +17,12 @@ lemlib::OdomSensors::OdomSensors(TrackingWheel* vertical1, TrackingWheel* vertic
       horizontal2(horizontal2),
       imu(imu) {}
 
-lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth,
+lemlib::Drivetrain::Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, pros::Motor* leftMotor, pros::Motor* rightMotor, float trackWidth,
                                float wheelDiameter, float rpm, float horizontalDrift)
     : leftMotors(leftMotors),
       rightMotors(rightMotors),
+      leftMotor(leftMotor),
+      rightMotor(rightMotor),
       trackWidth(trackWidth),
       wheelDiameter(wheelDiameter),
       rpm(rpm),

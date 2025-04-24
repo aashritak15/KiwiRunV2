@@ -152,10 +152,14 @@ class Drivetrain {
          *                               2); // horizontalDrift is 2. If we had traction wheels, it would have been 8
          * @endcode
          */
-        Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, float trackWidth, float wheelDiameter,
+        Drivetrain(pros::MotorGroup* leftMotors, pros::MotorGroup* rightMotors, pros::Motor* leftMotor, pros::Motor* rightMotor, float trackWidth, float wheelDiameter,
                    float rpm, float horizontalDrift);
         pros::MotorGroup* leftMotors;
         pros::MotorGroup* rightMotors;
+
+        pros::Motor* rightMotor;
+        pros::Motor* leftMotor; 
+        
         float trackWidth;
         float wheelDiameter;
         float rpm;
