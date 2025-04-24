@@ -28,7 +28,7 @@ void autonomous() {
     // kiwi::Path filePath(config, "/usd/path.json");
     // filePath.follow();
 
-    chassis.turnToHeading(90, 1000000);
+    chassis.moveToPose(5, 30, 90, 4000); 
 }
 
 void opcontrol() {
@@ -37,11 +37,21 @@ void opcontrol() {
     while(true) {
 
         if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT))  {
-            chassis.turnToHeading(45, 2000);
+            //chassis.turnToHeading(45, 2000);
+            chassis.moveToPoint(0, 24, 10000);
             std::cout<<"SDGDSFSd";
         }
-        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+            chassis.turnToHeading(90, 2000);}
+
+         if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X))  {
             chassis.turnToHeading(0, 2000);
+            std::cout<<"SDGDSFSd";
+
+         }
+       
+
+
         //kiwiRunControl();
 
         //matchControl();

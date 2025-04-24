@@ -40,23 +40,22 @@ scuff buttons are right, down, b, y
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-pros::MotorGroup leftMotors({-1, -8}, pros::MotorGearset::blue);
-pros::MotorGroup rightMotors({5, 14}, pros::MotorGearset::blue);
+pros::MotorGroup leftMotors({-1, -8, -20}, pros::MotorGearset::blue);
+pros::MotorGroup rightMotors({5, 14, 3}, pros::MotorGearset::blue);
 
-pros::Motor leftBack(-20, pros::MotorGearset::green);
-pros::Motor rightBack(3, pros::MotorGearset::green);
+
 
 pros::Imu imu(15);
 
 pros::Rotation lateralSensor(21);
 
-lemlib::TrackingWheel lateralTracker(&lateralSensor, lemlib::Omniwheel::NEW_2, -0.25);
+lemlib::TrackingWheel lateralTracker(&lateralSensor, lemlib::Omniwheel::NEW_2, -0.0095);
 
-lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, &leftBack, &rightBack, 11.5625,
+lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, 11.5625,
                               lemlib::Omniwheel::NEW_275, 450, 2);
 
-lemlib::ControllerSettings linearController(0, 0, 0, 3, 1, 100, 3, 500, 20);
-lemlib::ControllerSettings angularController(2.6, 0.9, 0, 3, 1, 100, 3, 500, 0);
+lemlib::ControllerSettings linearController(7.7, 0, 2, 3, 1, 100, 3, 500, 20);
+lemlib::ControllerSettings angularController(2.1, 0, 10.6, 3, 1, 100, 3, 500, 0);
 
 lemlib::OdomSensors sensors(nullptr, nullptr, &lateralTracker, nullptr, &imu);
 
