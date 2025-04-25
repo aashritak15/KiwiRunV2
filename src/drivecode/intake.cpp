@@ -9,6 +9,7 @@ bool downPressed = false;
 bool upPressed = false;
 
 //color sort states
+bool throwNextAfterThis = false;
 bool throwNext = false;
 bool throwNextNext = false;
 bool ringDetected = false;
@@ -26,7 +27,7 @@ void intakeInit() {
     optical.set_led_pwm(100);
 
     pros::Task intakeTask(runIntake, "intake");
-   //pros::Task colorTask(colorSort, "color sort"); //todo: fix color sort
+    pros::Task colorTask(colorSort, "color sort");
 }
 
 void updateIntake() {
@@ -71,12 +72,11 @@ void updateIntake() {
 
     if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)){
         if(!upPressed) {
-            if(sortState == 2)
+            upPressed = true;
+            sortState++;
+            if(sortState == 3) {
                 sortState = 0;
-            if(sortState == 0)
-                sortState = 1; //score red sort blue
-            if(sortState == 1)
-                sortState = 2; //score blue sort red
+            }
         }
     } else {
         upPressed = false;
@@ -110,68 +110,62 @@ void colorSort() {
         if(sortState == 0) {
             controller.set_text(0, 0, "no sort   ");
             throwNext = false;
-            throwNextNext = false;
             ringDetected = false;
         }
-
-
-        //if detect wrong color then prepare to throw next ring it sees
-        //if detect right color then prepare to not throw
 
         //throw red logic
         else if(sortState == 1) {
             controller.set_text(0, 0, "sort red   ");
 
-            if(150 < optical.get_hue() && optical.get_hue() < 220) { //if blue detected
-                if(!throwPushed) {
-                    throwRings.push(true);
-                    throwPushed = false;
-                }
-            } else if (0 < optical.get_hue() && optical.get_hue() < 30) {
-                if(!throwPushed) {
-                    throwRings.push(false);
-                    throwPushed = false;
+            if(0 < optical.get_hue() && optical.get_hue() < 30) { //if a newly detected ring is red,
+                if(!ringDetected) { //and a ring hasn't been detected yet,
+                    throwNext = true; //throw the next ring
+                    ringDetected = true;
+
+                    // std::cout<<"I SAW RED "<<"\n";
                 }
             } else {
-                throwPushed = false;
+                ringDetected = false;
             }
 
-            //throw logic
-            if(throwRings.front()) {
-                float prevIntake = intakeState;
-
-                intakeState = 2; //throw
-                pros::delay(100);
-                intakeState = prevIntake;
-            }
-            if(!throwRings.empty())
-                throwRings.pop();
-
-            // if(0 < optical.get_hue() && optical.get_hue() < 30) { //if a newly detected ring is red,
-            //     if(!ringDetected) { //and a ring hasn't been detected yet
-            //         if(throwNext) {
-            //             throwNextNext = true; //if there's a ring on second stage to be thrown and a new ring is detected, throw it too
-            //         }
-            //         throwNext = true; //throw the next ring
-            //         ringDetected = true;
+            /*
+            // if(150 < optical.get_hue() && optical.get_hue() < 220) { //if blue detected
+            //     if(!throwPushed) {
+            //         throwRings.push(true);
+            //         throwPushed = false;
+            //     }
+            // } else if (0 < optical.get_hue() && optical.get_hue() < 30) {
+            //     if(!throwPushed) {
+            //         throwRings.push(false);
+            //         throwPushed = false;
             //     }
             // } else {
-            //     ringDetected = false;
+            //     throwPushed = false;
             // }
 
+            // //throw logic
+            // if(throwRings.front()) {
+            //     float prevIntake = intakeState;
+
+            //     intakeState = 2; //throw
+            //     pros::delay(100);
+            //     intakeState = prevIntake;
+            // }
+            // if(!throwRings.empty())
+            //     throwRings.pop();
+            */
         }
 
         //throw blue logic
         else if(sortState == 2) {
             controller.set_text(0, 0, "sort blue   ");
 
-            if(0 < optical.get_hue() && optical.get_hue() < 30) { //if a newly detected ring is red,
+            if(200 < optical.get_hue() && optical.get_hue() < 240) { //if a newly detected ring is red,
                 if(!ringDetected) { //and a ring hasn't been detected yet
-                    if(throwNext) {
-                        throwNextNext = true; //if there's a ring on second stage to be thrown and a new ring is detected, throw it too
-                    }
                     throwNext = true; //throw the next ring
                     ringDetected = true;
+
+                    // std::cout<<"I SAW BLUE"<<"\n";
                 }
             } else {
                 ringDetected = false;
@@ -179,22 +173,20 @@ void colorSort() {
 
         }
 
-        // //actual throw logic
-        // if((throwNext || throwNextNext) && distance.get() < 10) { //if throw next and a ring is about to be scored,
-        //     float prevIntake = intakeState;
+        //actual throw logic
+        if(throwNext && distance.get() < 30) { //if throw next and a ring is about to be scored,
+            float prevIntake = intakeState;
 
-        //     intakeState = 2; //throw
-        //     pros::delay(100);
-        //     intakeState = prevIntake;
+            pros::delay(165);
 
-        //     if(throwNext) { //update vars
-        //         throwNext = false;
-        //     } else {
-        //         throwNextNext = false;
-        //     }
-        // }
+            intakeState = 2; //throw
+            pros::delay(100);
+            intakeState = prevIntake;
 
-        
+            // std::cout<<"I THREW IT"<<"\n";
+
+            throwNext = false;
+        }
 
         pros::delay(10);
     }

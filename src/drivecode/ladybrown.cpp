@@ -12,7 +12,6 @@ bool rightPressed = false;
 void ladyBrownInit() {
     ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     ladyBrown.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-    lbRotation.set_position(0);
 
     pros::Task lbTask(runLB, "ladybrown");
 }
@@ -21,13 +20,13 @@ void updateLB() {
     if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         descoreState = prevDescoreState;
         pidActive = true;
-        lbTarget = 30;
+        lbTarget = 27;
     }
 
     if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
         descoreState = prevDescoreState;
         pidActive = true;
-        lbTarget = 7;
+        lbTarget = 4;
     }
 
     // if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
@@ -65,14 +64,14 @@ void updateLB() {
 
 void runLB() {
 
-    float kP = 4.3;
-    const float kD = 3.8;
+    const float kP = 5.5;
+    const float kD = 4.4;
     float prevError = 0;
 
     int count = 1;
 
     while (true) {
-        // std::cout<<"pos: "<<lbRotation.get_angle()/100<<"\n";
+        std::cout<<"pos: "<<lbRotation.get_angle()/100<<"\n";
 
         if(!pidActive) { //if pid inactive, enable right stick control 
             float command = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / 127.0 * 100.0; 
@@ -81,18 +80,18 @@ void runLB() {
             pros::delay(10);
 
         } else { //if pid active, run pid
-            //std::cout<<"pos: "<<lbRotation.get_angle()/100<<"\n";
-            float error = lbTarget - lbRotation.get_position() / 100.0;
-            //std::cout<<"error: "<<error<<"\n";
 
-            if(std::abs(error) < 5) {
-                kP = 5;
-            } else {
-                kP = 4.3;
+            float pos = lbRotation.get_position() / 100.0;
+
+            if(pos < 0) {
+                pos = 0;
             }
 
+            float error = lbTarget - pos;
+            std::cout<<"error: "<<error<<"\n";
+
             float derivative = prevError - error;
-            //std::cout<<"derivative: "<<derivative<<"\n";
+            std::cout<<"derivative: "<<derivative<<"\n";
 
             float pTerm = error * kP;
             float dTerm = derivative * kD;
@@ -101,9 +100,11 @@ void runLB() {
 
             if(command > 100) { //clamp command
                 command = 100;
+            } else if (command < -100) {
+                command = -100;
             }
 
-            //std::cout<<"command: "<<command<<"\n\n";
+            std::cout<<"command: "<<command<<"\n\n";
 
             if(std::abs(error) < 1) { //pid timeout to enable manual control: .25 seconds within 1deg to target
                 count++;

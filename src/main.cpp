@@ -34,8 +34,8 @@ void redRingSide() {
     lbTarget = 180;
     pros::delay(750);
 
-    //mogo
-    //TRASH MOGO MECH ROUTE
+    // mogo
+    // TRASH MOGO MECH ROUTE
     // chassis.moveToPoint(17.6, -15.8, 1000, {.forwards = false});
     // chassis.turnToHeading(40, 750); //36.7
     // chassis.moveToPoint(9, -30.2, 500, {.forwards = false});
@@ -47,11 +47,11 @@ void redRingSide() {
     // lbTarget = 2;
     // pros::delay(5000);
 
-    //middle rings
-    chassis.turnToHeading(139, 500);
-    intakeState = 1;
-    chassis.moveToPose(30, -44, 90, 1000, {.lead = 0.5});
-    chassis.moveToPoint(40, -44, 1000);
+    // //middle rings
+    // chassis.turnToHeading(139, 500);
+    // intakeState = 1;
+    // chassis.moveToPose(30, -44, 90, 1000, {.lead = 0.5});
+    // chassis.moveToPoint(40, -44, 1000);
 }
 
 
@@ -67,23 +67,6 @@ void opcontrol() {
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
 
     while(true) {
-
-        // if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT))  {
-        //     //chassis.turnToHeading(45, 2000);
-        //     chassis.moveToPoint(0, 24, 10000);
-        //     std::cout<<"SDGDSFSd";
-        // }
-        // if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-        //     chassis.turnToHeading(90, 2000);}
-
-        //  if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X))  {
-        //     chassis.turnToHeading(0, 2000);
-        //     std::cout<<"SDGDSFSd";
-
-        //  }
-       
-
-
         //kiwiRunControl();
 
         matchControl();
