@@ -28,30 +28,43 @@ void redRingSide() {
 
     //alliance
     chassis.turnToHeading(-50, 500);
-    chassis.moveToPoint(-8.27, 4.23, 500);
+    chassis.moveToPoint(-7, 3.4, 1000); //-6.3, 2.7
     chassis.waitUntilDone();
     pidActive = true;
-    lbTarget = 180;
+    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    lbTarget = 177;
     pros::delay(750);
+    //lbTarget = 2;
 
     // mogo
-    // TRASH MOGO MECH ROUTE
-    // chassis.moveToPoint(17.6, -15.8, 1000, {.forwards = false});
-    // chassis.turnToHeading(40, 750); //36.7
-    // chassis.moveToPoint(9, -30.2, 500, {.forwards = false});
-    // chassis.waitUntilDone();
-    // chassis.moveToPoint(3, -35.8, 500, {.forwards = false, .maxSpeed = 20});
-    // chassis.waitUntilDone();
-    // clampState = 1;
-    // pidActive = true;
-    // lbTarget = 2;
-    // pros::delay(5000);
+    chassis.moveToPoint(5.3, -7.2, 750, {.forwards = false}); //6.4, -7.6
+    chassis.turnToHeading(0, 500);
+    chassis.moveToPoint(6.9, -29.5, 1000, {.forwards = false}); //try changing to move to pose
+    chassis.waitUntilDone();
+    pidActive = true;
+    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    lbTarget = 2;
+    clampState = 1;
+    pros::delay(100);
+    intakeState = 2;
 
-    // //middle rings
-    // chassis.turnToHeading(139, 500);
-    // intakeState = 1;
-    // chassis.moveToPose(30, -44, 90, 1000, {.lead = 0.5});
-    // chassis.moveToPoint(40, -44, 1000);
+    //middle rings
+    chassis.turnToHeading(132.1, 500);
+    chassis.waitUntilDone();
+    intakeState = 1;
+    chassis.moveToPose(36, -40, 90, 1000, {.lead = 0.4, .minSpeed = 80});
+    chassis.moveToPoint(45, -37.7, 1000, {.maxSpeed = 50});
+    pros::delay(1000);
+
+    //1 ring
+    chassis.moveToPoint(32, -33, 1000, {.forwards = false});
+    chassis.moveToPoint(15, -15, 1000, {.forwards = false});
+    chassis.turnToHeading(97.8, 500);
+    chassis.moveToPoint(34.5, -18.2, 500);
+    pros::delay(1000);
+
+    //corner rings
+    chassis.turnToHeading(23.7, 500);
 }
 
 
@@ -70,6 +83,8 @@ void opcontrol() {
         //kiwiRunControl();
 
         matchControl();
+
+        //autonControl();
 
         // firstPath.follow();
     }

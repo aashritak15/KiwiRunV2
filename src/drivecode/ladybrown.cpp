@@ -71,7 +71,7 @@ void runLB() {
     int count = 1;
 
     while (true) {
-        std::cout<<"pos: "<<lbRotation.get_angle()/100<<"\n";
+        //std::cout<<"pos: "<<lbRotation.get_angle()/100<<"\n";
 
         if(!pidActive) { //if pid inactive, enable right stick control 
             float command = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / 127.0 * 100.0; 
@@ -88,10 +88,10 @@ void runLB() {
             }
 
             float error = lbTarget - pos;
-            std::cout<<"error: "<<error<<"\n";
+            //std::cout<<"error: "<<error<<"\n";
 
             float derivative = prevError - error;
-            std::cout<<"derivative: "<<derivative<<"\n";
+            //std::cout<<"derivative: "<<derivative<<"\n";
 
             float pTerm = error * kP;
             float dTerm = derivative * kD;
@@ -104,7 +104,7 @@ void runLB() {
                 command = -100;
             }
 
-            std::cout<<"command: "<<command<<"\n\n";
+            //std::cout<<"command: "<<command<<"\n\n";
 
             if(std::abs(error) < 1) { //pid timeout to enable manual control: .25 seconds within 1deg to target
                 count++;

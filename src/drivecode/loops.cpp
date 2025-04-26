@@ -15,7 +15,7 @@ void screenTask() {
         pros::screen::print(pros::E_TEXT_MEDIUM, 2, "y: %.3f", pose.y);
         pros::screen::print(pros::E_TEXT_MEDIUM, 3, "heading: %.3f", pose.theta);
 
-        // std::cout<<"x: "<<pose.x<<" y: "<<pose.y<<" theta: "<<pose.theta<<"\n";
+        std::cout<<"x: "<<pose.x<<" y: "<<pose.y<<" theta: "<<pose.theta<<"\n";
 
         pros::delay(50);
     }
@@ -28,6 +28,60 @@ void matchControl() {
 
         int rawThrottle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rawTurn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+
+        float throttle = rawThrottle;
+        float turn = rawTurn * 0.9;
+
+        float leftCommand = (throttle + turn) / 127.0;
+        float rightCommand = (throttle - turn) / 127.0;
+
+        if(leftCommand > 1) {
+            float fix = 1 / leftCommand;
+            leftCommand = 1;
+            rightCommand *= fix;
+        }
+        
+        if(rightCommand > 1) {
+            float fix = 1 / rightCommand;
+            leftCommand *= fix;
+            rightCommand = 1;
+        }
+
+        leftCommand *= 12000;
+        rightCommand *= 12000;
+
+        leftMotors.move_voltage(leftCommand);
+    
+
+        rightMotors.move_voltage(rightCommand);
+     
+
+        // std::cout<<leftMotors.get_actual_velocity_all()[0]
+        // <<" "
+        // <<leftMotors.get_actual_velocity_all()[1]
+        // <<"\n";
+
+        // std::cout<<rightMotors.get_actual_velocity_all()[0]
+        // <<" "
+        // <<rightMotors.get_actual_velocity_all()[1]
+        // <<"\n\n";
+
+        updateIntake();
+        updatePistons();
+        updateLB();
+
+        pros::delay(10);
+    }
+}
+
+void autonControl() {
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+
+    while(true) {
+        pidActive = true;
+
+        int rawThrottle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rawTurn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
         float throttle = rawThrottle;
         float turn = rawTurn * 0.9;

@@ -9,6 +9,7 @@
 
 void matchControl();
 void kiwiRunControl();
+void autonControl();
 
 void screenInit();
 void screenTask();
