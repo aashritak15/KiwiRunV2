@@ -31,8 +31,11 @@ void redRingSide() {
     chassis.moveToPoint(-7, 3.4, 1000); //-6.3, 2.7
     chassis.waitUntilDone();
     pidActive = true;
-    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    lbTarget = 177;
+    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+   lbTarget = 170;
+
+
+
     pros::delay(750);
     //lbTarget = 2;
 
@@ -57,6 +60,7 @@ void redRingSide() {
     pros::delay(1000);
 
     //1 ring
+       chassis.moveToPoint(45, -36, 1000, {.forwards = false});
     chassis.moveToPoint(32, -33, 1000, {.forwards = false});
     chassis.moveToPoint(15, -15, 1000, {.forwards = false});
     chassis.turnToHeading(97.8, 500);
@@ -64,7 +68,26 @@ void redRingSide() {
     pros::delay(1000);
 
     //corner rings
-    chassis.turnToHeading(23.7, 500);
+    chassis.turnToHeading(29.7, 500);
+
+    chassis.moveToPoint( 36.9, 9.1, 1000);
+
+    chassis.turnToHeading(40, 1000); 
+
+    chassis.moveToPoint(45.9, 21.8, 1000, {.minSpeed = 80});
+    intakeState = 2; 
+
+    chassis.waitUntilDone(); 
+    pros::delay(1000);
+
+    chassis.moveToPoint(36.9, 9.1, 1000, {.forwards = false, .maxSpeed = 70}); 
+
+
+    
+
+    
+
+
 }
 
 
@@ -82,9 +105,9 @@ void opcontrol() {
     while(true) {
         //kiwiRunControl();
 
-        matchControl();
+        //matchControl();
 
-        //autonControl();
+        autonControl();
 
         // firstPath.follow();
     }
