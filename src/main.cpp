@@ -103,23 +103,22 @@ void redRingSide() {
 
 
 void autonomous() {
-    // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
-    // kiwi::Path filePath(config, "/usd/path.json");
-    // filePath.follow();
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+    kiwi::Path filePath(config, "/usd/path.json");
+    filePath.follow();
   
-    redRingSide();
+    // redRingSide();
 }
 
 void opcontrol() {
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
 
-    while(true) {
-        //kiwiRunControl();
+    kiwiRunControl();
 
-        matchControl();
+    // matchControl();
+    
 
-        // autonControl();
+    // autonControl();
 
-        // firstPath.follow();
-    }
+    // firstPath.follow();
 }

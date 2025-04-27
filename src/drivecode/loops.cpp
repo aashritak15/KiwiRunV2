@@ -53,6 +53,9 @@ void matchControl() {
         leftMotors.move_voltage(leftCommand);
         rightMotors.move_voltage(rightCommand);
 
+        std::cout<<leftMotors.get_actual_velocity(0)<<" ";
+        std::cout<<rightMotors.get_actual_velocity(0)<<"\n";
+
         updateIntake();
         updatePistons();
         updateLB();
@@ -142,8 +145,6 @@ void kiwiRunControl() {
         rightCommand *= 12000;
 
         leftMotors.move_voltage(leftCommand);
-     
-
         rightMotors.move_voltage(rightCommand);
         
 

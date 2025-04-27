@@ -48,8 +48,8 @@ namespace kiwi {
                 nlohmann::json pointData;
 
                 lemlib::Pose pose = this->chassis.getPose(true);
-                float leftRPM = leftMotors.get_actual_velocity();
-                float rightRPM = rightMotors.get_actual_velocity();
+                float leftRPM = leftMotors.get_actual_velocity(0); //TODO: indexed at 0
+                float rightRPM = rightMotors.get_actual_velocity(0);
 
                 float xPos = std::round(pose.x * 1000) / 1000;
                 float yPos = std::round(pose.y * 1000) / 1000;
@@ -68,8 +68,6 @@ namespace kiwi {
 
                 // pointData["linear vel"] = smoothedLinearVel;
                 // pointData["angular vel"] = smoothedAngularVel;
-
-                //TODO: maybe add back velocity smoothing
 
                 pointData["linear vel"] = rawLinearVel;
                 pointData["angular vel"] = rawAngularVel;

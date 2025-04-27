@@ -43,8 +43,6 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 pros::MotorGroup leftMotors({-1, -8, -20}, pros::MotorGearset::blue);
 pros::MotorGroup rightMotors({5, 14, 3}, pros::MotorGearset::blue);
 
-
-
 pros::Imu imu(15);
 
 pros::Rotation lateralSensor(21);

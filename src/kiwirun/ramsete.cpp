@@ -10,20 +10,20 @@ float Path::findLateralError(float targetX, float targetY) { // lateral error
 
     lemlib::Pose currentPose = this->config.chassis.getPose(true);
 
-    float deltaX = toMeters(currentPose.x) - targetX;
-    float deltaY = toMeters(currentPose.y) - targetY;
+    float deltaX = targetX - toMeters(currentPose.x);
+    float deltaY = targetY - toMeters(currentPose.y);
 
-    return sin(currentPose.theta) * std::sqrt(deltaX * deltaX + deltaY * deltaY);
+    return deltaX * std::cos(currentPose.theta) + deltaY * std::sin(currentPose.theta);
 }
 
 float Path::findLongitudinalError(float targetX, float targetY) { // longitudinal error
 
     lemlib::Pose currentPose = this->config.chassis.getPose(true);
 
-    float deltaX = toMeters(currentPose.x) - targetX;
-    float deltaY = toMeters(currentPose.y) - targetY;
+    float deltaX = targetX - toMeters(currentPose.x);
+    float deltaY = targetY - toMeters(currentPose.y);
 
-    return cos(currentPose.theta) * std::sqrt(deltaX * deltaX + deltaY * deltaY);
+    return -1 * deltaX * std::sin(currentPose.theta) + deltaY * cos(currentPose.theta);
 }
 
 int Path::findClosestPoint(lemlib::Pose pose, int prevIndex) {
@@ -89,7 +89,7 @@ void Path::ramseteStep(int index) {
 
     float errorLateral = findLateralError(targetX, targetY); // lateral or crosstrack error calculated in meters
     float errorLongitudinal = findLongitudinalError(targetX, targetY); // longitudinal or front/back error calculated in meters
-    float errorTheta = fmod((targetTheta - pose.theta), 360.0); // angular error calculated
+    float errorTheta = fmod((targetTheta - pose.theta), M_PI*2); // angular error calculated
 
     float gain = 2 * zeta * std::sqrt(
         std::pow(angularVelTarget, 2) + (beta * std::pow(linearVelTarget, 2))
