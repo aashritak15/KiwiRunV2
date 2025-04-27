@@ -24,70 +24,68 @@ void competition_initialize() {}
 
 //temp, move to separate file later
 void redRingSide() {
+    sortState = 2;
+
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
     //alliance
     chassis.turnToHeading(-50, 500);
     chassis.moveToPoint(-7, 3.4, 1000); //-6.3, 2.7
     chassis.waitUntilDone();
     pidActive = true;
-    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-   lbTarget = 170;
-
-
+    lbTarget = 195;
 
     pros::delay(750);
-    //lbTarget = 2;
-
-    // mogo
-    chassis.moveToPoint(5.3, -7.2, 750, {.forwards = false}); //6.4, -7.6
-    chassis.turnToHeading(0, 500);
-    chassis.moveToPoint(6.9, -29.5, 1000, {.forwards = false}); //try changing to move to pose
-    chassis.waitUntilDone();
     pidActive = true;
-    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     lbTarget = 2;
+
+    //mogo
+    chassis.moveToPoint(5.3, -7.2, 750, {.forwards = false});
+    chassis.turnToHeading(0, 500);
+    chassis.moveToPoint(6.9, -30.5, 1000, {.forwards = false}); //try changing to move to pose
+    chassis.waitUntilDone();
+    pros::delay(350);
     clampState = 1;
-    pros::delay(100);
+    pros::delay(250);
     intakeState = 2;
 
     //middle rings
     chassis.turnToHeading(132.1, 500);
     chassis.waitUntilDone();
     intakeState = 1;
-    chassis.moveToPose(36, -40, 90, 1000, {.lead = 0.4, .minSpeed = 80});
-    chassis.moveToPoint(45, -37.7, 1000, {.maxSpeed = 50});
-    pros::delay(1000);
+    chassis.moveToPose(35, -42.5, 90, 1000, {.lead = 0.6, .minSpeed = 50});
+    chassis.moveToPoint(47, -42.5, 1000, {.maxSpeed = 60}); //TODO: prev 43.25
+    chassis.waitUntilDone();
+    pros::delay(250);
 
     //1 ring
-       chassis.moveToPoint(45, -36, 1000, {.forwards = false});
-    chassis.moveToPoint(32, -33, 1000, {.forwards = false});
-    chassis.moveToPoint(15, -15, 1000, {.forwards = false});
-    chassis.turnToHeading(97.8, 500);
-    chassis.moveToPoint(34.5, -18.2, 500);
-    pros::delay(1000);
+    chassis.moveToPose(7.6, -22.7, 138, 1500, {.forwards = false, .minSpeed = 70});
+    chassis.waitUntilDone();
+    chassis.turnToHeading(84, 500);
+    chassis.moveToPoint(29.7, -23.6, 1000, {.maxSpeed = 100});
+    chassis.waitUntilDone();
+    pros::delay(250);
 
-    //corner rings
-    chassis.turnToHeading(29.7, 500);
+    //ring stack
+    chassis.moveToPose(13, -17.5, 90, 1250, {.forwards = false});
+    chassis.waitUntilDone();
 
-    chassis.moveToPoint( 36.9, 9.1, 1000);
+    chassis.moveToPose(43, 8, 42.4, 3000, {.minSpeed = 50});
+    chassis.waitUntilDone();
 
-    chassis.turnToHeading(40, 1000); 
+    intakeState = 2;
+    chassis.moveToPoint(45.47, 12.44, 750, {.minSpeed = 90});
+    chassis.waitUntilDone();
+    pros::delay(350);
+    intakeState = 1;
+    pros::delay(350);
 
-    chassis.moveToPoint(45.9, 21.8, 1000, {.minSpeed = 80});
-    intakeState = 2; 
+    //fifth ring
+    chassis.moveToPoint(32.9, -4.3, 750, {.forwards = false});
+    chassis.turnToHeading(-90, 500);
 
-    chassis.waitUntilDone(); 
-    pros::delay(1000);
-
-    chassis.moveToPoint(36.9, 9.1, 1000, {.forwards = false, .maxSpeed = 70}); 
-
-
-    
-
-    
-
-
+    return;
 }
 
 
@@ -105,7 +103,7 @@ void opcontrol() {
     while(true) {
         //kiwiRunControl();
 
-        //matchControl();
+        // matchControl();
 
         autonControl();
 

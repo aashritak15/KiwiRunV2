@@ -9,9 +9,7 @@ bool downPressed = false;
 bool upPressed = false;
 
 //color sort states
-bool throwNextAfterThis = false;
 bool throwNext = false;
-bool throwNextNext = false;
 bool ringDetected = false;
 int sortState = 0;
 
@@ -95,7 +93,6 @@ void runIntake() {
             firstStage.move_voltage(-12000);
             secondStage.move_voltage(-12000);
             throwNext = false;
-            throwNextNext = false;
         } else if(intakeState == 3) {
             firstStage.move_voltage(12000);
         }
@@ -127,33 +124,6 @@ void colorSort() {
             } else {
                 ringDetected = false;
             }
-
-            /*
-            // if(150 < optical.get_hue() && optical.get_hue() < 220) { //if blue detected
-            //     if(!throwPushed) {
-            //         throwRings.push(true);
-            //         throwPushed = false;
-            //     }
-            // } else if (0 < optical.get_hue() && optical.get_hue() < 30) {
-            //     if(!throwPushed) {
-            //         throwRings.push(false);
-            //         throwPushed = false;
-            //     }
-            // } else {
-            //     throwPushed = false;
-            // }
-
-            // //throw logic
-            // if(throwRings.front()) {
-            //     float prevIntake = intakeState;
-
-            //     intakeState = 2; //throw
-            //     pros::delay(100);
-            //     intakeState = prevIntake;
-            // }
-            // if(!throwRings.empty())
-            //     throwRings.pop();
-            */
         }
 
         //throw blue logic

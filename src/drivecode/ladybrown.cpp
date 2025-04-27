@@ -65,7 +65,7 @@ void updateLB() {
 void runLB() {
 
     const float kP = 5.5;
-    const float kD = 4.4;
+    const float kD = 4.7;
     float prevError = 0;
 
     int count = 1;

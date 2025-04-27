@@ -19,5 +19,6 @@ void runIntake();
 void colorSort();
 
 extern float intakeState;
+extern int sortState;
 
 #endif

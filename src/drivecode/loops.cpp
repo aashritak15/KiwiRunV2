@@ -51,20 +51,7 @@ void matchControl() {
         rightCommand *= 12000;
 
         leftMotors.move_voltage(leftCommand);
-    
-
         rightMotors.move_voltage(rightCommand);
-     
-
-        // std::cout<<leftMotors.get_actual_velocity_all()[0]
-        // <<" "
-        // <<leftMotors.get_actual_velocity_all()[1]
-        // <<"\n";
-
-        // std::cout<<rightMotors.get_actual_velocity_all()[0]
-        // <<" "
-        // <<rightMotors.get_actual_velocity_all()[1]
-        // <<"\n\n";
 
         updateIntake();
         updatePistons();
@@ -81,7 +68,7 @@ void autonControl() {
         pidActive = true;
 
         int rawThrottle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rawTurn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        int rawTurn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
 
         float throttle = rawThrottle;
         float turn = rawTurn * 0.9;
@@ -105,20 +92,7 @@ void autonControl() {
         rightCommand *= 12000;
 
         leftMotors.move_voltage(leftCommand);
-    
-
         rightMotors.move_voltage(rightCommand);
-     
-
-        // std::cout<<leftMotors.get_actual_velocity_all()[0]
-        // <<" "
-        // <<leftMotors.get_actual_velocity_all()[1]
-        // <<"\n";
-
-        // std::cout<<rightMotors.get_actual_velocity_all()[0]
-        // <<" "
-        // <<rightMotors.get_actual_velocity_all()[1]
-        // <<"\n\n";
 
         updateIntake();
         updatePistons();
