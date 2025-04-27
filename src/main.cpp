@@ -45,7 +45,7 @@ void redRingSide() {
     // chassis.moveToPoint(5.3, -7.2, 750, {.forwards = false});
     // chassis.turnToHeading(0, 500);
     chassis.moveToPose(4, -24, 0, 2400, {.forwards = false, .minSpeed = 60});
-    chassis.moveToPoint(4, -31.5, 1000, {.forwards = false, .maxSpeed = 70});
+    chassis.moveToPoint(4, -32, 1000, {.forwards = false, .maxSpeed = 60});
     // chassis.moveToPose(6.9, -30.5, 0, 2400, {.forwards = false, .lead = 0.2, .minSpeed = 50}); //try changing to move to pose
     chassis.waitUntilDone();
     pros::delay(100);
@@ -55,15 +55,20 @@ void redRingSide() {
 
     //middle rings
     chassis.turnToHeading(132.1, 500, {.minSpeed = 70});
+    chassis.waitUntilDone();
     intakeState = 1;
-    chassis.moveToPose(35, -41.5, 90, 1000, {.lead = 0.6, .minSpeed = 70});
-    chassis.moveToPoint(45, -41.5, 1000, {.maxSpeed = 60}); //TODO: prev 43.25
+    chassis.moveToPose(35, -2, 90, 1000, {.minSpeed = 70});
+    chassis.moveToPoint(45, -42, 1000, {.maxSpeed = 60}); //TODO: prev 43.25
     chassis.waitUntilDone();
     pros::delay(250);
 
-    return;
-
-    
+    // chassis.moveToPose(15.04, -31.95, 130.5, 2000, {.forwards = false});
+    // chassis.turnToHeading(61, 1000);
+    // chassis.waitUntilDone();
+    // pros::delay(200);
+    // // chassis.moveToPoint(29.16, -26.94, 1000);
+    // chassis.moveToPoint(30, -28, 1000);
+    // chassis.moveToPose(51.23, 5.85, 41.8, 3000);
 
     //1 ring
     chassis.moveToPose(7.6, -22.7, 138, 1500, {.forwards = false, .minSpeed = 90});
@@ -73,25 +78,25 @@ void redRingSide() {
     chassis.waitUntilDone();
     pros::delay(100);
 
-    //ring stack
-    chassis.moveToPose(43, 8, 42.4, 3000, {.minSpeed = 60}); //60
-    chassis.waitUntilDone();
+    chassis.turnToHeading(-90, 1000);
+    chassis.moveToPoint(-25, -23.6, 1000);
+    // //ring stack
+    // chassis.moveToPose(43, 8, 42.4, 3000, {.minSpeed = 60}); //60
+    // chassis.waitUntilDone();
 
-    intakeState = 2;
-    chassis.moveToPoint(45.47, 12.44, 750, {.minSpeed = 100}); //100
-    chassis.waitUntilDone();
-    pros::delay(350);
-    intakeState = 1;
-    pros::delay(500);
+    // intakeState = 2;
+    // chassis.moveToPoint(45.47, 12.44, 750, {.minSpeed = 100}); //100
+    // chassis.waitUntilDone();
+    // pros::delay(350);
+    // intakeState = 1;
+    // pros::delay(500);
 
-    //fifth ring
-    chassis.moveToPoint(32.9, -4.3, 1000, {.forwards = false, .maxSpeed = 50});
-    chassis.turnToHeading(230, 1200);
+    // //fifth ring
+    // chassis.moveToPoint(32.9, -4.3, 1000, {.forwards = false, .maxSpeed = 50});
+    // chassis.turnToHeading(230, 1200);
 
-    chassis.moveToPoint(0, -27.3, 3000);
-    chassis.waitUntilDone();
-
-
+    // chassis.moveToPoint(0, -27.3, 3000);
+    // chassis.waitUntilDone();
 
     return;
 }
@@ -111,9 +116,9 @@ void opcontrol() {
     while(true) {
         //kiwiRunControl();
 
-        // matchControl();
+        matchControl();
 
-        autonControl();
+        // autonControl();
 
         // firstPath.follow();
     }
