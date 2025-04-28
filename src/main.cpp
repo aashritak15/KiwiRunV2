@@ -176,13 +176,64 @@ void redMogo() {
 
     //intake the ring # 1 
 
-    chassis.moveToPoint(28,-31, 1000);
+    chassis.moveToPoint(20,-31, 1000);
 
-    //turn to ring # 2 
+    //turn and go to ring # 2 
 
-    chassis.turnToHeading(-17, 1000);
+    chassis.turnToHeading(0, 1000);
 
-    
+    chassis.moveToPoint(20, -0.5, 2000);
+
+    pros::delay(500);
+
+    //turn to face corner and go
+
+    chassis.turnToHeading(45, 1000);
+
+    intakeState = 2;
+
+    chassis.moveToPoint(29.7, 13.3, 2000);
+    chassis.waitUntilDone();
+    intakeState = 1;
+
+    pros::delay(1500);
+
+    //go back to the position before corner
+
+    return;
+
+    chassis.moveToPoint(16,-4, 2000, {.forwards = false});
+
+
+
+    /* extra stuff if time permits
+
+
+    //turn to face rings in middle ladder
+
+    chassis.turnToHeading(226.5, 1000);
+
+    chassis.moveToPose(-14.3, -35, 200, 3000, {.lead = 0.3, .minSpeed = 80});
+
+    chassis.waitUntilDone();
+
+    leftDoinkerState = 1;
+
+    pros::delay(100);
+
+    return;
+
+    //move backwards
+
+    chassis.moveToPoint(-11, -26.8, 2000, {.forwards = false});
+
+    //turn to intake the ring
+
+    chassis.turnToHeading(-155, 1000);
+
+    return;
+*/
+
 
 
 }
