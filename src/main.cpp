@@ -44,8 +44,8 @@ void redRingSide() {
     //mogo
     // chassis.moveToPoint(5.3, -7.2, 750, {.forwards = false});
     // chassis.turnToHeading(0, 500);
-    chassis.moveToPose(4, -24, 0, 2400, {.forwards = false, .minSpeed = 60});
-    chassis.moveToPoint(4, -32, 1000, {.forwards = false, .maxSpeed = 60});
+    chassis.moveToPose(4, -24, 0, 2400, {.forwards = false, .minSpeed = 40});
+    chassis.moveToPoint(4, -32, 1000, {.forwards = false, .maxSpeed = 40});
     // chassis.moveToPose(6.9, -30.5, 0, 2400, {.forwards = false, .lead = 0.2, .minSpeed = 50}); //try changing to move to pose
     chassis.waitUntilDone();
     pros::delay(100);
@@ -54,11 +54,11 @@ void redRingSide() {
     intakeState = 2;
 
     //middle rings
-    chassis.turnToHeading(132.1, 500, {.minSpeed = 70});
+    chassis.turnToHeading(132.1,3000, {.minSpeed = 70});
     chassis.waitUntilDone();
     intakeState = 1;
-    chassis.moveToPose(35, -2, 90, 1000, {.minSpeed = 70});
-    chassis.moveToPoint(45, -42, 1000, {.maxSpeed = 60}); //TODO: prev 43.25
+    chassis.moveToPose(35, -39.5, 90, 1000, {.minSpeed = 70});
+    chassis.moveToPoint(41.5, -39.5, 1000, {.maxSpeed = 60}); //TODO: prev 43.25
     chassis.waitUntilDone();
     pros::delay(250);
 
@@ -79,7 +79,7 @@ void redRingSide() {
     pros::delay(100);
 
     chassis.turnToHeading(-90, 1000);
-    chassis.moveToPoint(-25, -23.6, 1000);
+    chassis.moveToPoint(-17, -23.6, 5000, {.maxSpeed = 80});
     // //ring stack
     // chassis.moveToPose(43, 8, 42.4, 3000, {.minSpeed = 60}); //60
     // chassis.waitUntilDone();
@@ -101,24 +101,111 @@ void redRingSide() {
     return;
 }
 
+void blueRingSide() {
+    sortState = 1;
+
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    //alliance
+   
+    chassis.turnToHeading(50, 500);
+    chassis.moveToPoint(7, 3.4, 1000); //-6.3, 2.7
+    chassis.waitUntilDone();
+    pidActive = true;
+    lbTarget = 195;
+
+    pros::delay(500);//750
+    pidActive = true;
+    lbTarget = 2;
+
+    //mogo
+   
+    chassis.moveToPose(-4.5, -24, 0, 2400, {.forwards = false,  .minSpeed = 40});
+    chassis.moveToPoint(-4.5, -34, 1000, {.forwards = false, .maxSpeed = 40});
+    
+    chassis.waitUntilDone();
+    pros::delay(100);
+    clampState = 1;
+    pros::delay(100);
+    intakeState = 2;
+
+    // //middle rings
+    chassis.turnToHeading(-150.7,3000, {.minSpeed = 70});
+    chassis.waitUntilDone();
+    intakeState = 1;
+    chassis.moveToPose(-35, -56.5, -90, 1000, {.minSpeed = 70});
+    chassis.moveToPoint(-39.5, -56.5, 1000, {.maxSpeed = 60}); //TODO: prev 43.25
+    chassis.waitUntilDone();
+    pros::delay(250);
+
+   
+
+    // // //1 ring
+    chassis.moveToPose(-1, -30.2, -136, 1500, {.forwards = false, .minSpeed = 90});
+    chassis.waitUntilDone();
+    chassis.turnToHeading(-105.5, 900);
+     chassis.moveToPoint(-23.9, -42.2, 1000);
+    // chassis.waitUntilDone();
+    // pros::delay(100);
+    chassis.turnToHeading(90, 1000);
+    chassis.moveToPoint(16.1, -39.1 , 5000, {.maxSpeed = 80});
+    
+
+    return;
+}
+
+void redMogo() {
+    //going to clamp 
+    chassis.moveToPoint(0, -31, 1000, {.forwards = false});
+    chassis.waitUntilDone();
+    pros::delay(200 ); 
+
+    //clamp onto the goal 
+    clampState = 1;
+    
+    pros::delay(250 ); 
+
+
+
+    //turn to face ring stack 
+
+    chassis.turnToHeading(90, 1000);
+
+    intakeState = 1;
+
+    //intake the ring # 1 
+
+    chassis.moveToPoint(28,-31, 1000);
+
+    //turn to ring # 2 
+
+    chassis.turnToHeading(-17, 1000);
+
+    
+
+
+}
+
 
 void autonomous() {
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
-    kiwi::Path filePath(config, "/usd/path.json");
-    filePath.follow();
+    // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+    // kiwi::Path filePath(config, "/usd/path.json");
+    // filePath.follow();
   
-    // redRingSide();
+    //redRingSide();
+    redMogo(); 
 }
 
 void opcontrol() {
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
 
-    kiwiRunControl();
+    //kiwiRunControl();
 
     // matchControl();
     
 
-    // autonControl();
+     autonControl();
 
     // firstPath.follow();
 }
