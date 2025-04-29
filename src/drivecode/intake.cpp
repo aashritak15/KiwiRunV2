@@ -11,7 +11,7 @@ bool upPressed = false;
 //color sort states
 bool throwNext = false;
 bool ringDetected = false;
-int sortState = 0;
+int sortState;
 
 float intakeState = 0;
 

@@ -70,7 +70,7 @@ void autonControl() {
     while(true) {
         pidActive = true;
 
-        int rawThrottle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rawThrottle = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
         int rawTurn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
 
         float throttle = rawThrottle;
