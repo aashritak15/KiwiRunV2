@@ -287,61 +287,77 @@ void blueMogo() {
 }
 
 void redMogo() {
-    sortState = 2;
+    //sortState = 2;
     //going to clamp 
-    chassis.moveToPoint(0, -31, 1000, {.forwards = false});
+    chassis.moveToPoint(0, -29, 1000, {.forwards = false, .maxSpeed = 70});
     chassis.waitUntilDone();
     pros::delay(200 ); 
 
     //clamp onto the goal 
     clampState = 1;
     
-    pros::delay(250 ); 
+    pros::delay(100); 
 
 
 
     //turn to face ring stack 
 
-    chassis.turnToHeading(-90, 1000);
+    chassis.turnToHeading(-90, 700);
 
-    intakeState = 1;
 
     //intake the ring # 1 
 
-    chassis.moveToPoint(-20,-31, 1000);
+    chassis.moveToPoint(-22,-33, 1000);
+    intakeState = 1;
 
     //turn and go to ring # 2 
 
     chassis.turnToHeading(0, 1000);
 
-    chassis.moveToPoint(-20, -0.5, 2000);
+    chassis.moveToPoint(-23, -16, 2000);
 
-    pros::delay(500);
+    pros::delay(200);
 
     //turn to face corner and go
 
     chassis.turnToHeading(-45, 1000);
-    chassis.waitUntilDone();
+    chassis.moveToPoint(-40, 3.5, 2000);
 
     intakeState = 2;
-
-    chassis.moveToPoint(-29.7, 13.3, 2000);
+    
     chassis.waitUntilDone();
+    pros::delay(400);
     intakeState = 1;
+    pros::delay(300);
 
-    pros::delay(1500);
 
-    //option numero uno: get ring by alliance and touch ladder
-    //go to rings by alliance stake
-    chassis.moveToPoint(-16.5, 1, 1000, {.forwards = false});
+    chassis.moveToPoint(-23, -10, 2000, {.forwards = false});
     chassis.turnToHeading(90, 1000);
-    chassis.moveToPose(50, 0, -90, 2000, {.minSpeed = 80});
-    chassis.waitUntilDone();
 
-    //ladder
-    chassis.turnToHeading(-170, 500, {.direction = AngularDirection::CW_CLOCKWISE});
-    chassis.moveToPoint(22.22, -20, 1000);
-    //end of option 1
+    chassis.moveToPoint(17, -7, 2000);
+    chassis.moveToPoint(25, -7, 2000, {.maxSpeed = 60});
+    pros::delay(300);
+
+    chassis.turnToHeading(200, 1000);
+    pros::delay(300);
+
+    chassis.moveToPoint(23, -23, 2000, {.maxSpeed = 60});
+
+
+
+    // pros::delay(1500);
+
+    // //option numero uno: get ring by alliance and touch ladder
+    // //go to rings by alliance stake
+    // chassis.moveToPoint(-16.5, 1, 1000, {.forwards = false});
+    // chassis.turnToHeading(90, 1000);
+    // chassis.moveToPose(50, 0, -90, 2000, {.minSpeed = 80});
+    // chassis.waitUntilDone();
+
+    // //ladder
+    // chassis.turnToHeading(-170, 500, {.direction = AngularDirection::CW_CLOCKWISE});
+    // chassis.moveToPoint(22.22, -20, 1000);
+    // //end of option 1
 
 
     // //option number dos: straight to ladder

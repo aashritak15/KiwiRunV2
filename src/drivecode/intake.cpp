@@ -130,7 +130,7 @@ void colorSort() {
         else if(sortState == 2) {
             controller.set_text(0, 0, "sort blue   ");
 
-            if(200 < optical.get_hue() && optical.get_hue() < 240) { //if a newly detected ring is red,
+            if(100 < optical.get_hue() && optical.get_hue() < 240) { //if a newly detected ring is red,
                 if(!ringDetected) { //and a ring hasn't been detected yet
                     throwNext = true; //throw the next ring
                     ringDetected = true;
@@ -147,7 +147,7 @@ void colorSort() {
         if(throwNext && distance.get() < 30) { //if throw next and a ring is about to be scored,
             float prevIntake = intakeState;
 
-            pros::delay(165);
+            pros::delay(170);
 
             intakeState = 2; //throw
             pros::delay(100);
