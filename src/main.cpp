@@ -368,8 +368,12 @@ void redMogo() {
 
 void blueMogoRush() {
     sortState = 1;
+    firstStage.move_voltage(0);
+    secondStage.move_voltage(0);
+
     //goal rush
     intakeState = 3;
+    secondStage.move_voltage(0);
     chassis.moveToPoint(0, 37, 1500);
     chassis.waitUntil(35);
     rightDoinkerState = 1;
@@ -382,21 +386,67 @@ void blueMogoRush() {
     rightDoinkerState = 0;
 
     //get mogo
-    chassis.turnToHeading(-87.2, 1000);
-    chassis.moveToPoint(18, 13.8, 1000, {.forwards = false});
+    intakeState = 0;
+    chassis.turnToHeading(-93, 500);
+    chassis.moveToPoint(9.6, 14.3, 1000, {.forwards = false});
     chassis.waitUntilDone();
     clampState = 1;
-    pros::delay(100);
+    pros::delay(200);
     intakeState = 1;
-    pros::delay(750);
+    pros::delay(900);
     clampState = 0;
+    pros::delay(100);
 
     //go to other mogo
+    intakeState = 2;
     chassis.moveToPoint(1.9, 13.5, 1000);
     chassis.turnToHeading(-177, 500);
     chassis.moveToPoint(5.8, 23.7, 500, {.forwards = false, .maxSpeed = 70});
     chassis.waitUntilDone();
     clampState = 1;
+    pros::delay(100);
+
+    //move to corner
+    intakeState = 1;
+    chassis.turnToHeading(-144.4, 750);
+    chassis.moveToPoint(-9.3, -1.7, 750);
+    chassis.waitUntilDone();
+    pros::delay(900); //TODO: decrease
+
+    chassis.turnToHeading(-114, 750);
+    intakeState = 2;
+    chassis.waitUntilDone();
+
+    chassis.moveToPoint(-25.7, -10.5, 1000, {.minSpeed = 90});
+    chassis.waitUntilDone();
+    intakeState = 1;
+    pros::delay(600);
+
+    //move to ladder
+    chassis.moveToPoint(0.8, -0.1, 1000, {.forwards = false, .maxSpeed = 40});
+    chassis.waitUntilDone();
+
+    chassis.turnToHeading(35, 600);
+    pros::delay(100);
+    chassis.moveToPoint(13.5, 18.7, 1000);
+
+    // chassis.moveToPoint(-24.3, -11.1, 750, {.minSpeed = 90});
+    // pros::delay(1000);
+    // intakeState = 1;
+
+    return;
+
+    // chassis.moveToPose(-25.1, -12.4, -116.5, 10000, {.minSpeed = 70});
+    // pros::delay(400);
+    // intakeState = 1;
+
+    //corner tomfoolery
+    // chassis.turnToHeading(-142.7, 500);
+    // chassis.moveToPoint(-8.85, -0.9, 500);
+    // chassis.turnToHeading(-119.5, 500);
+    // chassis.moveToPoint(-25.05, -11.03, 500, {.minSpeed = 90});
+    // pros::delay(400);
+    // intakeState = 1;
 }
 
 

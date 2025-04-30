@@ -95,6 +95,7 @@ void runIntake() {
             throwNext = false;
         } else if(intakeState == 3) {
             firstStage.move_voltage(12000);
+            secondStage.move_voltage(0);
         }
 
         pros::delay(10);
