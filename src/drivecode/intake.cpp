@@ -147,7 +147,7 @@ void colorSort() {
         if(throwNext && distance.get() < 30) { //if throw next and a ring is about to be scored,
             float prevIntake = intakeState;
 
-            pros::delay(170);
+            pros::delay(140);
 
             intakeState = 2; //throw
             pros::delay(100);

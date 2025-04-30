@@ -206,6 +206,7 @@ void blueMogo() {
     chassis.turnToHeading(-90, 1000);
     chassis.moveToPose(-50, 0, -90, 2000, {.minSpeed = 80});
     chassis.waitUntilDone();
+    pros::delay(1000);
 
     //ladder
     chassis.turnToHeading(170, 500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
@@ -287,7 +288,7 @@ void blueMogo() {
 }
 
 void redMogo() {
-    //sortState = 2;
+    sortState = 2;
     //going to clamp 
     chassis.moveToPoint(0, -29, 1000, {.forwards = false, .maxSpeed = 70});
     chassis.waitUntilDone();
@@ -307,88 +308,107 @@ void redMogo() {
 
     //intake the ring # 1 
 
-    chassis.moveToPoint(-22,-33, 1000);
+    chassis.moveToPoint(-22,-34, 1000);
     intakeState = 1;
 
     //turn and go to ring # 2 
 
     chassis.turnToHeading(0, 1000);
 
-    chassis.moveToPoint(-23, -16, 2000);
+    chassis.moveToPoint(-23, -14, 2000);
 
     pros::delay(200);
 
     //turn to face corner and go
 
     chassis.turnToHeading(-45, 1000);
-    chassis.moveToPoint(-40, 3.5, 2000);
-
+    chassis.waitUntilDone();
     intakeState = 2;
-    
+    chassis.moveToPoint(-40, 3.5, 2000);
     chassis.waitUntilDone();
     pros::delay(400);
     intakeState = 1;
-    pros::delay(300);
+    pros::delay(1000);
 
 
-    chassis.moveToPoint(-23, -10, 2000, {.forwards = false});
-    chassis.turnToHeading(90, 1000);
-
-    chassis.moveToPoint(17, -7, 2000);
-    chassis.moveToPoint(25, -7, 2000, {.maxSpeed = 60});
-    pros::delay(300);
-
-    chassis.turnToHeading(200, 1000);
-    pros::delay(300);
-
-    chassis.moveToPoint(23, -23, 2000, {.maxSpeed = 60});
-
-
-
-    // pros::delay(1500);
-
-    // //option numero uno: get ring by alliance and touch ladder
-    // //go to rings by alliance stake
-    // chassis.moveToPoint(-16.5, 1, 1000, {.forwards = false});
+    // //option number uno: get alliance ring and go to ladder
+    // chassis.moveToPoint(-23, -10, 2000, {.forwards = false});
     // chassis.turnToHeading(90, 1000);
-    // chassis.moveToPose(50, 0, -90, 2000, {.minSpeed = 80});
-    // chassis.waitUntilDone();
+
+    // chassis.moveToPoint(10, -7, 2000);
+    // chassis.moveToPoint(30, -7, 2000, {.maxSpeed = 60});
+    // pros::delay(300);
 
     // //ladder
-    // chassis.turnToHeading(-170, 500, {.direction = AngularDirection::CW_CLOCKWISE});
-    // chassis.moveToPoint(22.22, -20, 1000);
+    // chassis.turnToHeading(200, 1000);
+    // chassis.moveToPoint(23, -23, 2000, {.maxSpeed = 60});
     // //end of option 1
 
 
     // //option number dos: straight to ladder
-    // chassis.moveToPoint(-16.5, 1, 1000, {.forwards = false});
-    // chassis.moveToPose(12.6, -26.7, 227, 2000, {.minSpeed = 80});
+    // //touches ladder in center for some reason
+    // chassis.moveToPoint(-23, -10, 2000, {.forwards = false});
+    // chassis.moveToPose(12.6, -30, 227, 2000, {.minSpeed = 80});
     // chassis.waitUntilDone();
     // pidActive = true;
     // lbTarget = 35;
     // //end of option 2
 
 
-    // //option number tres: drop and go to center mogo
-    // chassis.moveToPoint(-16.5, 1, 1000, {.forwards = false});
-    // pros::delay(1000);
-    // chassis.turnToHeading(136.5, 500);
-    // chassis.waitUntilDone();
-    // clampState = 0;
-    // chassis.moveToPose(-19.8, -23, 0, 2000, {.forwards = false});
-    // //end of option 3
+    //option number tres: drop and go to center mogo
+    chassis.moveToPoint(-23, -10, 2000, {.forwards = false});
+    pros::delay(1000);
+    chassis.turnToHeading(136.5, 500);
+    chassis.waitUntilDone();
+    clampState = 0;
+    chassis.moveToPose(-25, -30, 0, 2000, {.forwards = false});
+    //end of option 3
 
+}
+
+void blueMogoRush() {
+    sortState = 1;
+    //goal rush
+    intakeState = 3;
+    chassis.moveToPoint(0, 37, 1500);
+    chassis.waitUntil(35);
+    rightDoinkerState = 1;
+
+    pros::delay(250);
+
+    //pull back and drop mogo
+    chassis.moveToPoint(0, 18, 1000, {.forwards = false});
+    chassis.waitUntil(20);
+    rightDoinkerState = 0;
+
+    //get mogo
+    chassis.turnToHeading(-87.2, 1000);
+    chassis.moveToPoint(18, 13.8, 1000, {.forwards = false});
+    chassis.waitUntilDone();
+    clampState = 1;
+    pros::delay(100);
+    intakeState = 1;
+    pros::delay(750);
+    clampState = 0;
+
+    //go to other mogo
+    chassis.moveToPoint(1.9, 13.5, 1000);
+    chassis.turnToHeading(-177, 500);
+    chassis.moveToPoint(5.8, 23.7, 500, {.forwards = false, .maxSpeed = 70});
+    chassis.waitUntilDone();
+    clampState = 1;
 }
 
 
 void autonomous() {
-    // chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
     // kiwi::Path filePath(config, "/usd/path.json");
     // filePath.follow();
   
     //redRingSide();
     //blueMogo(); 
-    redMogo();
+    //redMogo();
+    blueMogoRush();
 }
 
 void opcontrol() {
