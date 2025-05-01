@@ -467,8 +467,8 @@ void redMogoRush() {
 
     //get mogo
     intakeState = 0;
-    chassis.turnToHeading(96.8, 500);
-    chassis.moveToPoint(-17, 20.2, 1000, {.forwards = false, .maxSpeed = 65});
+    chassis.turnToHeading(103.3, 500);
+    chassis.moveToPoint(-15.3, 22.1, 1000, {.forwards = false, .maxSpeed = 65});
     chassis.waitUntilDone();
     clampState = 1;
     pros::delay(200);
@@ -480,8 +480,8 @@ void redMogoRush() {
     //go to other mogo
     intakeState = 2;
     chassis.moveToPoint(-1.8, 19.3, 1000);
-    chassis.turnToHeading(181.3, 500);
-    chassis.moveToPoint(-3, 29.7, 1000, {.forwards = false, .maxSpeed = 70});
+    chassis.turnToHeading(169.3, 500);
+    chassis.moveToPoint(-3.8, 32.9, 1000, {.forwards = false, .maxSpeed = 70});
     chassis.waitUntilDone();
     clampState = 1;
     pros::delay(100);
@@ -489,28 +489,36 @@ void redMogoRush() {
     //move to corner
     sortState = 2;
     intakeState = 1;
-    chassis.turnToHeading(137, 750);
-    chassis.moveToPoint(17.6, 7.5, 750);
+    chassis.turnToHeading(145.3, 750);
+    chassis.moveToPoint(15, 7.3, 750);
     chassis.waitUntilDone();
     pros::delay(900); //TODO: decrease
 
-    // chassis.turnToHeading(114, 750);
-    // intakeState = 2;
-    // chassis.waitUntilDone();
 
-    // chassis.moveToPoint(25.7, -10.5, 1000, {.minSpeed = 90});
-    // chassis.waitUntilDone();
-    // intakeState = 1;
-    // pros::delay(600);
+
+
+
+    chassis.turnToHeading(115.3, 1050);
+    chassis.waitUntilDone(); 
+    intakeState = 2;
+
+
+
+    chassis.waitUntilDone();
+
+    chassis.moveToPoint(32.97, -0.3, 1000, {.minSpeed = 90});
+    chassis.waitUntilDone();
+    intakeState = 1;
+    pros::delay(600);
 
     // //move to ladder
-    // chassis.moveToPoint(-0.8, -0.1, 1000, {.forwards = false, .maxSpeed = 40});
-    // chassis.waitUntilDone();
+    chassis.moveToPoint(-0.8, -0.1, 1000, {.forwards = false, .maxSpeed = 40});
+    chassis.waitUntilDone();
 
-    // chassis.turnToHeading(-35, 600);
-    // pros::delay(100);
-    // chassis.moveToPoint(-13.5, 18.7, 1000);
-    // chassis.turnToHeading(-71.1, 500);
+    chassis.turnToHeading(-51.6, 600);
+    pros::delay(100);
+    // chassis.moveToPoint(-17.1, 24.6, 4000);
+    
     // pros::delay(1000);
     // pidActive = true;
     // lbTarget = 165;
