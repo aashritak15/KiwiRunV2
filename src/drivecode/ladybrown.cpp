@@ -81,11 +81,13 @@ void runLB() {
 
         } else { //if pid active, run pid
 
-            float pos = lbRotation.get_position() / 100.0;
+            float pos = lbRotation.get_angle() / 100.0;
 
-            if(pos < 0) {
+            if(pos > 350) {
                 pos = 0;
             }
+
+            std::cout<<pos<<"\n";
 
             float error = lbTarget - pos;
             //std::cout<<"error: "<<error<<"\n";

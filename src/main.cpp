@@ -451,6 +451,8 @@ void blueMogoRush() {
 }
 
 void redMogoRush() {
+
+    
     //goal rush
     intakeState = 3;
     secondStage.move_voltage(0);
@@ -515,10 +517,47 @@ void redMogoRush() {
     chassis.turnToHeading(-50.7, 600);
     pros::delay(100);
     chassis.moveToPoint(-24.4, 31.8, 4000);
-    
-    // pros::delay(1000);
-    // pidActive = true;
-    // lbTarget = 165;
+    chassis.waitUntilDone();
+
+     pidActive = true;
+     lbTarget = 140;
+     
+}
+
+void sigSoloWP(){
+    sortState = 2;
+
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    //alliance
+    // chassis.moveToPose(-7, 3.4, -50, 1500);
+    chassis.turnToHeading(-50, 500);
+    chassis.moveToPoint(-7, 3.4, 1000); //-6.3, 2.7
+    chassis.waitUntilDone();
+    pidActive = true;
+    lbTarget = 195;
+
+    pros::delay(500);//750
+    pidActive = true;
+    lbTarget = 2;
+
+    //mogo
+    // chassis.moveToPoint(5.3, -7.2, 750, {.forwards = false});
+    // chassis.turnToHeading(0, 500);
+    chassis.moveToPose(4, -24, 0, 2400, {.forwards = false, .minSpeed = 40});
+    chassis.moveToPoint(4, -32, 1000, {.forwards = false, .maxSpeed = 40});
+    // chassis.moveToPose(6.9, -30.5, 0, 2400, {.forwards = false, .lead = 0.2, .minSpeed = 50}); //try changing to move to pose
+    chassis.waitUntilDone();
+    pros::delay(100);
+    clampState = 1;
+    pros::delay(100);
+    intakeState = 1;
+
+    //go to intake 1 ring
+    chassis.turnToHeading(134.5, 1000);
+    chassis.moveToPoint(18.59, -42.83, 2000);
+
 }
 
 void autonomous() {
@@ -530,7 +569,7 @@ void autonomous() {
     //blueMogo(); 
     //redMogo();
     //blueMogoRush();
-    redMogoRush();
+    sigSoloWP();
 }
 
 void opcontrol() {
