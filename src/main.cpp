@@ -524,7 +524,7 @@ void redMogoRush() {
      
 }
 
-void sigSoloWP(){
+void redSigSoloWP(){
     sortState = 2;
 
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
@@ -557,6 +557,33 @@ void sigSoloWP(){
     //go to intake 1 ring
     chassis.turnToHeading(134.5, 1000);
     chassis.moveToPoint(18.59, -42.83, 2000);
+    pros::delay(500);
+
+    //back up and turn to second ring
+    chassis.moveToPoint(3.53, -28.17, 1000, {.forwards = false});
+    chassis.turnToHeading(90, 500);
+    chassis.moveToPoint(26.8, -29.3, 1000);
+
+    //go to alliance ring and unclamp mogo
+    chassis.moveToPoint(15, -2, 2000);
+    chassis.turnToHeading(-85, 500);
+    chassis.waitUntilDone();
+    clampState = 0;
+    chassis.moveToPoint(-15, 1.5, 2000);
+    chassis.moveToPoint(-48, 1.5, 2000, {.maxSpeed = 40});
+
+    //throw blue, keep red
+    color = 2;
+    pros::Task swpTask(swpAuton, "swp");
+    pros::delay(250);
+    chassis.turnToHeading(-3, 500);
+    chassis.moveToPoint(-46.8, -22, 1000, {.forwards = false});
+    chassis.waitUntilDone();
+    clampState = 1;
+
+    //turn to last ring
+    chassis.turnToHeading(-85, 500);
+
 
 }
 
@@ -569,7 +596,7 @@ void autonomous() {
     //blueMogo(); 
     //redMogo();
     //blueMogoRush();
-    sigSoloWP();
+    redSigSoloWP();
 }
 
 void opcontrol() {

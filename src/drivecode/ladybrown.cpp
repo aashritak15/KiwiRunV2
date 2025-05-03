@@ -87,7 +87,7 @@ void runLB() {
                 pos = 0;
             }
 
-            std::cout<<pos<<"\n";
+            //std::cout<<pos<<"\n";
 
             float error = lbTarget - pos;
             //std::cout<<"error: "<<error<<"\n";

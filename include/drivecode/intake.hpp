@@ -17,6 +17,9 @@ void intakeInit();
 void updateIntake();
 void runIntake();
 void colorSort();
+void swpAuton();
+
+extern int color;
 
 extern float intakeState;
 extern int sortState;

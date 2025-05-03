@@ -3,6 +3,8 @@
 #include "pros/motors.h"
 #include <queue>
 
+int color = 0;
+
 bool l1Pressed = false;
 bool l2Pressed = false;
 bool downPressed = false;
@@ -190,5 +192,23 @@ void colorSort() {
         
 
         pros::delay(10);
+    }
+}
+
+void swpAuton() {
+    bool colorFound = false;
+    while(!colorFound) {
+        if(color == 1) { // blue
+            if(100 < optical.get_hue() && optical.get_hue() < 240) {
+                intakeState = 0;
+                colorFound = true;
+            }
+        }
+        if(color == 2) { // red
+            if(0 < optical.get_hue() && optical.get_hue() < 20) {
+                intakeState = 0;
+                colorFound = true;
+            }
+        }
     }
 }

@@ -16,6 +16,8 @@ void screenTask() {
         pros::screen::print(pros::E_TEXT_MEDIUM, 3, "heading: %.3f", pose.theta);
     
         pros::screen::print(pros::E_TEXT_MEDIUM, 4, "lb position: %.3f", lbRotation.get_angle()/100.0);
+        std::cout<<"x: "<<pose.x<<" y: "<<pose.y<<" theta: "<<pose.theta<<"\n";
+
 
         pros::delay(50);
     }
