@@ -672,10 +672,10 @@ void opcontrol() {
 
     //kiwiRunControl();
 
-    // matchControl();
+    matchControl();
     
 
-     autonControl();
+    //autonControl();
 
     // firstPath.follow();
 }
