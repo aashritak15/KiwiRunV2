@@ -554,37 +554,104 @@ void redSigSoloWP(){
     pros::delay(100);
     intakeState = 1;
 
-    //go to intake 1 ring
-    chassis.turnToHeading(134.5, 1000);
-    chassis.moveToPoint(18.59, -42.83, 2000);
-    pros::delay(500);
-
-    //back up and turn to second ring
-    chassis.moveToPoint(3.53, -28.17, 1000, {.forwards = false});
+    //first ring
     chassis.turnToHeading(90, 500);
-    chassis.moveToPoint(26.8, -29.3, 1000);
+    chassis.moveToPoint(24.8, -28.9, 1000);
 
     //go to alliance ring and unclamp mogo
     chassis.moveToPoint(15, -2, 2000);
     chassis.turnToHeading(-85, 500);
     chassis.waitUntilDone();
     clampState = 0;
-    chassis.moveToPoint(-15, 1.5, 2000);
-    chassis.moveToPoint(-48, 1.5, 2000, {.maxSpeed = 40});
+    chassis.moveToPoint(-15, 1, 2000);
+    chassis.moveToPoint(-52.6, 1, 3000, {.maxSpeed = 60});
 
     //throw blue, keep red
     color = 2;
     pros::Task swpTask(swpAuton, "swp");
     pros::delay(250);
     chassis.turnToHeading(-3, 500);
-    chassis.moveToPoint(-46.8, -22, 1000, {.forwards = false});
+    chassis.moveToPoint(-50, -23, 1000, {.forwards = false, .maxSpeed = 80});
     chassis.waitUntilDone();
     clampState = 1;
+    pros::delay(100);
 
     //turn to last ring
-    chassis.turnToHeading(-85, 500);
+    intakeState = 1;
+    chassis.turnToHeading(-87, 500);
+    chassis.moveToPoint(-80.1, -22.7, 1000);
 
+    //ladder
+    chassis.turnToHeading(-80, 500);
+    chassis.moveToPoint(-41, -34.8, 1000, {.forwards = false});
+    chassis.waitUntilDone();
+    pidActive = true;
+    lbTarget = 28;
+}
 
+void blueSigSoloWP(){
+    sortState = 1;
+
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+    ladyBrown.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    //alliance
+    // chassis.moveToPose(-7, 3.4, -50, 1500);
+    chassis.turnToHeading(50, 500);
+    chassis.moveToPoint(7, 3.4, 1000); //-6.3, 2.7
+    chassis.waitUntilDone();
+    pidActive = true;
+    lbTarget = 195;
+
+    pros::delay(500);//750
+    pidActive = true;
+    lbTarget = 2;
+
+    //mogo
+    // chassis.moveToPoint(5.3, -7.2, 750, {.forwards = false});
+    // chassis.turnToHeading(0, 500);
+    chassis.moveToPose(-4, -24, 0, 2400, {.forwards = false, .minSpeed = 40});
+    chassis.moveToPoint(-4, -32, 1000, {.forwards = false, .maxSpeed = 40});
+    // chassis.moveToPose(6.9, -30.5, 0, 2400, {.forwards = false, .lead = 0.2, .minSpeed = 50}); //try changing to move to pose
+    chassis.waitUntilDone();
+    pros::delay(100);
+    clampState = 1;
+    pros::delay(100);
+    intakeState = 1;
+
+    //first ring
+    chassis.turnToHeading(-90, 500);
+    chassis.moveToPoint(-24.8, -28.9, 1000);
+
+    //go to alliance ring and unclamp mogo
+    chassis.moveToPoint(-15, -2, 2000);
+    chassis.turnToHeading(85, 500);
+    chassis.waitUntilDone();
+    clampState = 0;
+    chassis.moveToPoint(15, 1, 2000);
+    chassis.moveToPoint(52.6, 1, 3000, {.maxSpeed = 60});
+
+    //throw blue, keep red
+    color = 1;
+    pros::Task swpTask(swpAuton, "swp");
+    pros::delay(250);
+    chassis.turnToHeading(3, 500);
+    chassis.moveToPoint(50, -25, 1000, {.forwards = false, .maxSpeed = 80});
+    chassis.waitUntilDone();
+    clampState = 1;
+    pros::delay(100);
+
+    //turn to last ring
+    intakeState = 1;
+    chassis.turnToHeading(87, 500);
+    chassis.moveToPoint(80.1, -26.2, 1000);
+
+    //ladder
+    chassis.turnToHeading(80, 500);
+    chassis.moveToPoint(41, -34.8, 1000, {.forwards = false});
+    chassis.waitUntilDone();
+    pidActive = true;
+    lbTarget = 28;
 }
 
 void autonomous() {
@@ -596,7 +663,8 @@ void autonomous() {
     //blueMogo(); 
     //redMogo();
     //blueMogoRush();
-    redSigSoloWP();
+    //redSigSoloWP();
+    blueSigSoloWP();
 }
 
 void opcontrol() {
