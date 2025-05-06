@@ -160,7 +160,6 @@ void colorSort() {
                     std::cout<<"I SAW RED "<<"\n";
                 }
             } else {
-                throwRings.push(false);
                 ringDetected = false;
             }
 

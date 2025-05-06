@@ -16,7 +16,7 @@ void screenTask() {
         pros::screen::print(pros::E_TEXT_MEDIUM, 3, "heading: %.3f", pose.theta);
     
         pros::screen::print(pros::E_TEXT_MEDIUM, 4, "lb position: %.3f", lbRotation.get_angle()/100.0);
-        std::cout<<"x: "<<pose.x<<" y: "<<pose.y<<" theta: "<<pose.theta<<"\n";
+        // std::cout<<"x: "<<pose.x<<" y: "<<pose.y<<" theta: "<<pose.theta<<"\n";
 
 
         pros::delay(50);
@@ -54,9 +54,6 @@ void matchControl() {
 
         leftMotors.move_voltage(leftCommand);
         rightMotors.move_voltage(rightCommand);
-
-        std::cout<<leftMotors.get_actual_velocity(0)<<" ";
-        std::cout<<rightMotors.get_actual_velocity(0)<<"\n";
 
         updateIntake();
         updatePistons();
