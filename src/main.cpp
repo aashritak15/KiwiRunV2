@@ -673,7 +673,7 @@ void autonomous() {
 }
 
 void opcontrol() {
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
     //kiwiRunControl();
 
